@@ -1,0 +1,3 @@
+[submodule "KraisEngine/vendor/spdlog"]
+	path = KraisEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
