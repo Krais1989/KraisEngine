@@ -22,7 +22,7 @@ namespace KE::Log {
 
 	#define KE_TRACE(msg, ...) Logger::WriteMessage("TRACE: "##msg##"\n"##__VA_ARGS__)
 	#define KE_INFO(msg, ...) Logger::WriteMessage("INFO: "##msg##"\n"##__VA_ARGS__)
-	#define KE_INFO(msg) Logger::WriteMessage("INFO: "##msg##"\n")
+	//#define KE_INFO(msg) Logger::WriteMessage("INFO: "##msg##"\n")
 	#define KE_WARN(msg, ...) Logger::WriteMessage("WARN: "##msg##"\n"##__VA_ARGS__)
 	#define KE_ERROR(msg, ...) Logger::WriteMessage("ERROR: "##msg##"\n"##__VA_ARGS__)
 	#define KE_CRITICAL(msg, ...) Logger::WriteMessage("CRITICAL: "##msg##"\n"##__VA_ARGS__)

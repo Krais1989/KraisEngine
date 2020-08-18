@@ -45,6 +45,7 @@ public:
 	DynArray(int length = KE_DYNARRAY_DEFAULT_SIZE)
 		: m_length(length)
 		, m_data(new T[length])
+		, m_isMoveSemantic(false)
 	{
 		KE_CORE_INFO("DynArray construction by length");
 		//m_data = new T[length];
