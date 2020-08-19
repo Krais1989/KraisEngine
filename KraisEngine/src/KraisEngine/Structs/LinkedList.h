@@ -1,17 +1,30 @@
 #pragma once
+
+/// <summary>
+/// Односвязный список
+/// Оперирует классами Element(Elem), хранящие shared_ptr на данные T(Data) и weak_ptr на следующий элемент
+/// Содержит указатель на последний элемент для O(1) при вставке в конец
+/// </summary>
+/// <typeparam name="T">Тип хранимых данных</typeparam>
 template <typename T>
 class LinkedList
 {
-	template <typename T>
-	class Element;
+public:
+	template <typename T> class Element;
 
 	using Data = T;						// хранимый тип данных
-	using elem = Element<T>;			// елемент хранящий данные
-	using wp_elem = std::weak_ptr<T>;
+	using Elem = Element<T>;			// елемент хранящий данные
+	using wp_elem = std::weak_ptr<T>;	// слабая ссылка на элемент
 
 	using sp_data = std::shared_ptr<T>; // расшаренный указатель на данные
-	using wp_data = std::weak_ptr<T>;	// слабый указатель на данные
-	using cp_cdata = const T* const;	// константный указатель на константный объект
+	using wp_data = std::weak_ptr<T>;	// слабая ссылка на данные
+	using cp_data = T* const;			// константный указатель на константный объект
+
+	using func_find_elem = std::function<bool(const Elem&, int)>; // делегат функции поиска элемента
+	using func_find_data = std::function<bool(const Data&, int)>; // делегат функции поиска данных
+
+private:
+
 
 	/// <summary>
 	/// Класс элемента для хранения ссылки на данные и на следующий элемент
@@ -22,7 +35,7 @@ class LinkedList
 	{
 	private:
 		sp_data m_data;
-		elem* m_next;
+		Elem* m_next;
 	public:
 		Element(sp_data& data) : m_data(data), m_next(nullptr) {}
 
@@ -40,59 +53,56 @@ class LinkedList
 		/// <summary>
 		/// Константный указатель на данные
 		/// </summary>
-		cp_cdata GetDataPtr() const {
-			return (cp_cdata) & *m_data;
+		cp_data GetDataPtr() const {
+			return (cp_data) & *m_data;
 		}
 
-		void SetNext(elem* next) { m_next = next; }
-		elem* GetNext() { return m_next; }
+		void SetNext(Elem* next) { m_next = next; }
+		Elem* GetNext() { return m_next; }
 	};
 
-	elem* m_first;
-	elem* m_last;
+	Elem* m_first;
+	Elem* m_last;
 	int m_size;
 
 public:
 
 	LinkedList() : m_first(nullptr), m_last(nullptr), m_size(0) {}
 
-	int GetSize() const { return m_size; }
-
 	virtual ~LinkedList() {
 		Clear();
 	}
 
-	void Clear() {
-		elem* cur = m_first;
-		elem* nxt = nullptr;
-
-		while (cur != nullptr) {
-			nxt = cur->GetNext();
-			delete cur;
-			cur = nxt;
-		}
-
-		m_first = nullptr;
-		m_last = nullptr;
-		m_size = 0;
-	}
-
 	sp_data& operator[] (int index) const { return this->GetByIndex(index); }
 
-	sp_data& GetByIndex(int index) const {
-		if (index < 0 || index >= m_size)
-			throw std::out_of_range("wrong index");
+	int GetSize() const { return m_size; }
+	Data& GetFirst() const { return *m_first->GetData(); }
+	Data& GetLast() const { return *m_last->GetData(); }
 
-		elem* cur = m_first;
+	sp_data& GetByIndex(int index) {
+		return GetElemByIndex(index)->GetData();
+	}
+
+	Elem* GetElemByIndex(int index) {
+		CheckIndexWithThrow(index);
+
+		Elem* cur = m_first;
 		for (int i = 0; i < index; i++)
-		{
 			cur = cur->GetNext();
-		}
-		return cur->GetData();
+		return cur;
+	}
+
+	bool CheckIndex(int index) const {
+		return index >= 0 && index < m_size;
+	}
+
+	void CheckIndexWithThrow(int index) {
+		if (!CheckIndex(index))
+			throw std::out_of_range("wrong index");
 	}
 
 	sp_data& Push(sp_data& spdata) {
-		auto* el = new elem(spdata);
+		auto* el = new Elem(spdata);
 		if (m_first == nullptr) m_first = el;
 		if (m_last != nullptr)
 			m_last->SetNext(el);
@@ -109,13 +119,42 @@ public:
 		return Push(newdata);
 	}
 
+	sp_data& Insert(Data&& data, int index) {
+		sp_data newdata = sp_data(new Data(std::move(data)));
+		return Insert(newdata, index);
+	}
+
+	/// <summary>
+	/// Вставка data в позицию index. 
+	/// Старый элемент с позицией index будет смешен вперед.
+	/// </summary>
+	sp_data& Insert(sp_data& data, int index) {
+		CheckIndexWithThrow(index);
+		Elem* newElem = new Elem(data);
+
+		/* Найти родительский элемент (индекс == index-1) и вставить data после него */
+		/* Соответственно index == 0 обрабатывается отдельно */
+
+		if (index == 0) {
+			newElem->SetNext(m_first);
+			m_first = newElem;
+		}
+		else {
+			/* Найдем родительский элемент (index - 1) и произведем вставку после него */
+			Elem* parent = GetElemByIndex(index - 1);
+			newElem->SetNext(parent->GetNext());
+			parent->SetNext(newElem);
+		}
+		m_size++;
+		return newElem->GetData();
+	}
 
 	bool Remove(Data& data) {
-		elem* prev = nullptr;
-		elem* del = nullptr;
-		elem* next = nullptr;
+		Elem* prev = nullptr;
+		Elem* del = nullptr;
+		Elem* next = nullptr;
 
-		if (!Find(data, prev, del, next))
+		if (!FindElemByData(data, prev, del, next))
 			return false;
 
 		if (prev == nullptr)
@@ -131,36 +170,90 @@ public:
 		return true;
 	}
 
-	/// <summary>
-	/// Поиск elem
-	/// </summary>
-	bool Find(Data& data, elem*& out_prev, elem*& out_cur, elem*& out_next) const {
-		elem* prev = nullptr;
-		elem* cur = m_first;
+	void Clear() {
+		Elem* cur = m_first;
+		Elem* nxt = nullptr;
 
-		/*for (Elem* c = m_first; c != nullptr || &c->GetData() != &data; c = c->GetNext()) { }*/
-
-		while (!(cur == nullptr || cur->GetDataPtr() == &data)) {
-			prev = cur;
-			cur = prev->GetNext();
+		while (cur != nullptr) {
+			nxt = cur->GetNext();
+			delete cur;
+			cur = nxt;
 		}
 
-		out_prev = prev;
-		out_cur = cur;
-		out_next = cur != nullptr ? cur->GetNext() : nullptr;
-		//out_next = out_cur != nullptr ? *out_cur->GetNext() : nullptr;
+		m_first = nullptr;
+		m_last = nullptr;
+		m_size = 0;
+	}
+
+	bool FindElemByFunc(func_find_elem find_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+
+		int i = 0;
+		while (!(out_cur == nullptr || find_func(*out_cur, i))) {
+			if (out_cur != m_first)
+				out_prev = out_cur;
+
+			out_cur = out_cur->GetNext();
+			i++;
+		}
+
+		out_next = out_cur != nullptr ? out_cur->GetNext() : nullptr;
 		return out_cur != nullptr;
 	}
-
-	bool Exists(Data& data) const {
-		elem* cur;
-		elem* prev;
-		elem* next;
-		return Find(data, prev, cur, next);
+	bool FindElemByDataFunc(func_find_data find_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+		return FindElemByFunc([&find_func](const Elem& elem, int index) { return find_func(elem->GetDataPtr(), index) }, out_prev, out_cur, out_next);
 	}
 
+	bool FindElemByIndex(int index, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+		CheckIndexWithThrow(index);
+		return FindElemByDataFunc([index](const Data& d, int i) {return i == index}, out_prev, out_cur, out_next);
+	}
 
-	Data& GetFirst() const { return *m_first->GetData(); }
-	Data& GetLast() const { return *m_last->GetData(); }
+	bool FindElemByData(const Data& data, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+		return FindElemByDataFunc([&data](const Data& d, int i) {return &d == &data}, out_prev, out_cur, out_next);
+	}
+
+	cp_data FindDataByElemFunc(func_find_elem find_func, Elem*& prev) const {
+		Elem* cur = m_first;
+		int i = 0;
+		while (!(cur == nullptr || find_func(*cur, i))) {
+			if (cur != m_first)
+				prev = cur;
+
+			cur = cur->GetNext();
+			i++;
+		}
+		return cur != nullptr ? cur->GetDataPtr() : nullptr;
+	}
+
+	cp_data FindDataByElemFunc(func_find_elem find_func) const {
+		Elem* prev;
+		return FindDataByElemFunc(find_func, prev);
+	}
+
+	cp_data FindDataByFunc(func_find_data find_func, Elem*& prev) const
+	{
+		return FindDataByElemFunc([&find_func](const Elem& el, int index) { return find_func(*el.GetDataPtr(), index); }, prev);
+	}
+
+	cp_data FindDataByFunc(func_find_data find_func) const
+	{
+		Elem* prev;
+		return FindDataByFunc(find_func, prev);
+	}
+
+	bool Exists(func_find_data find_func) const
+	{
+		return FindDataByFunc(find_func) != nullptr;
+	}
+
+	bool Exists(const Data& data) const
+	{
+		return FindDataByFunc([&data](const Data& ddd, int index) { return &ddd == &data; }) != nullptr;
+	}
+
+	bool Exists(Data&& data) const
+	{
+		return FindDataByFunc([data](const Data& ddd, int index) { return ddd == data; }) != nullptr;
+	}
 };
 
