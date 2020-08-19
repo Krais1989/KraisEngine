@@ -79,11 +79,6 @@ namespace Tests
 
 		TEST_METHOD(LinkedListTest) {
 
-			LinkedList<int> iList;
-			iList.Push(1);
-			Assert::IsTrue(iList.Exists(1));
-			Assert::IsFalse(iList.Exists(2));
-
 			LinkedList<A> list;
 
 			auto a = list.Push({ 1,1 });
@@ -94,7 +89,7 @@ namespace Tests
 			auto c = list.Insert({3,3}, 2);
 
 			auto g = list.FindDataByElemFunc([](const LinkedList<A>::Elem& elem, int ind) { return elem.GetDataPtr()->a == 3; });
-			auto g2 = list.FindByDataFunc([](const LinkedList<A>::Data& data, int ind) { return data.a == 3; });
+			auto g2 = list.FindDataByFunc([](const LinkedList<A>::Data& data, int ind) { return data.a == 3; });
 			Assert::IsTrue(g == g2);
 
 			Assert::IsTrue(*c == *list.GetByIndex(2));

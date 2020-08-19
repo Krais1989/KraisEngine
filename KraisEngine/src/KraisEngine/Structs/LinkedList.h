@@ -115,13 +115,11 @@ public:
 	/// Пуш r-value
 	/// </summary>
 	sp_data& Push(Data&& data) {
-		sp_data newdata = sp_data(new Data(std::move(data)));
-		return Push(newdata);
+		return Push(sp_data(new Data(std::move(data))));
 	}
 
 	sp_data& Insert(Data&& data, int index) {
-		sp_data newdata = sp_data(new Data(std::move(data)));
-		return Insert(newdata, index);
+		return Insert(sp_data(new Data(std::move(data))), index);
 	}
 
 	/// <summary>
@@ -185,13 +183,16 @@ public:
 		m_size = 0;
 	}
 
-	bool FindElemByFunc(func_find_elem find_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+	/// <summary>
+	/// Основная функция поиска элементов по предикате
+	/// </summary>
+	bool FindElemByFunc(func_find_elem elem_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
 
+		out_cur = m_first;
+		out_prev = nullptr;
 		int i = 0;
-		while (!(out_cur == nullptr || find_func(*out_cur, i))) {
-			if (out_cur != m_first)
-				out_prev = out_cur;
-
+		while (out_cur != nullptr && !elem_func(*out_cur, i)) {
+			out_prev = out_cur;
 			out_cur = out_cur->GetNext();
 			i++;
 		}
@@ -199,8 +200,9 @@ public:
 		out_next = out_cur != nullptr ? out_cur->GetNext() : nullptr;
 		return out_cur != nullptr;
 	}
-	bool FindElemByDataFunc(func_find_data find_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
-		return FindElemByFunc([&find_func](const Elem& elem, int index) { return find_func(elem->GetDataPtr(), index) }, out_prev, out_cur, out_next);
+
+	bool FindElemByDataFunc(func_find_data data_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+		return FindElemByFunc([&data_func](const Elem& elem, int index) { return data_func(*elem.GetDataPtr(), index); }, out_prev, out_cur, out_next);
 	}
 
 	bool FindElemByIndex(int index, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
@@ -209,51 +211,46 @@ public:
 	}
 
 	bool FindElemByData(const Data& data, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
-		return FindElemByDataFunc([&data](const Data& d, int i) {return &d == &data}, out_prev, out_cur, out_next);
+		return FindElemByDataFunc([&data](const Data& d, int i) { return &d == &data; }, out_prev, out_cur, out_next);
 	}
 
-	cp_data FindDataByElemFunc(func_find_elem find_func, Elem*& prev) const {
-		Elem* cur = m_first;
-		int i = 0;
-		while (!(cur == nullptr || find_func(*cur, i))) {
-			if (cur != m_first)
-				prev = cur;
-
-			cur = cur->GetNext();
-			i++;
-		}
-		return cur != nullptr ? cur->GetDataPtr() : nullptr;
+	cp_data FindDataByElemFunc(func_find_elem elem_func, Elem*& out_prev) const {
+		Elem* cur;
+		Elem* next;
+		if (!FindElemByFunc(elem_func, out_prev, cur, next))
+			return nullptr;
+		return cur->GetDataPtr();
 	}
 
-	cp_data FindDataByElemFunc(func_find_elem find_func) const {
+	cp_data FindDataByElemFunc(func_find_elem elem_func) const {
 		Elem* prev;
-		return FindDataByElemFunc(find_func, prev);
+		return FindDataByElemFunc(elem_func, prev);
 	}
 
-	cp_data FindDataByFunc(func_find_data find_func, Elem*& prev) const
+	cp_data FindDataByFunc(func_find_data data_func, Elem*& prev) const
 	{
-		return FindDataByElemFunc([&find_func](const Elem& el, int index) { return find_func(*el.GetDataPtr(), index); }, prev);
+		return FindDataByElemFunc([&data_func](const Elem& el, int index) { return data_func(*el.GetDataPtr(), index); }, prev);
 	}
 
-	cp_data FindDataByFunc(func_find_data find_func) const
+	cp_data FindDataByFunc(func_find_data data_func) const
 	{
 		Elem* prev;
-		return FindDataByFunc(find_func, prev);
+		return FindDataByFunc(data_func, prev);
 	}
 
-	bool Exists(func_find_data find_func) const
+	bool Exists(func_find_data data_func) const
 	{
-		return FindDataByFunc(find_func) != nullptr;
+		return FindDataByFunc(data_func) != nullptr;
 	}
 
 	bool Exists(const Data& data) const
 	{
-		return FindDataByFunc([&data](const Data& ddd, int index) { return &ddd == &data; }) != nullptr;
+		return Exists([&data](const Data& d, int index) { return &d == &data; });
 	}
 
 	bool Exists(Data&& data) const
 	{
-		return FindDataByFunc([data](const Data& ddd, int index) { return ddd == data; }) != nullptr;
+		return Exists([data](const Data& ddd, int index) { return ddd == data; });
 	}
 };
 
