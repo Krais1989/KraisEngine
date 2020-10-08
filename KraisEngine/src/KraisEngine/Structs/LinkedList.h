@@ -20,8 +20,8 @@ public:
 	using wp_data = std::weak_ptr<T>;	// слабая ссылка на данные
 	using cp_data = T* const;			// константный указатель на константный объект
 
-	using func_find_elem = std::function<bool(const Elem&, int)>; // делегат функции поиска элемента
-	using func_find_data = std::function<bool(const Data&, int)>; // делегат функции поиска данных
+	using func_find_elem = std::function<bool(const Elem&, size_t)>; // делегат функции поиска элемента
+	using func_find_data = std::function<bool(const Data&, size_t)>; // делегат функции поиска данных
 
 private:
 
@@ -63,7 +63,7 @@ private:
 
 	Elem* m_first;
 	Elem* m_last;
-	int m_size;
+	size_t m_size;
 
 public:
 
@@ -73,32 +73,38 @@ public:
 		Clear();
 	}
 
-	sp_data& operator[] (int index) const { return this->GetByIndex(index); }
+	sp_data& operator[] (size_t index) { return this->GetByIndex(index); }
+	const sp_data& operator[] (size_t index) const { return this->GetByIndex(index); }
 
-	int GetSize() const { return m_size; }
+	size_t GetSize() const { return m_size; }
 	Data& GetFirst() const { return *m_first->GetData(); }
 	Data& GetLast() const { return *m_last->GetData(); }
 
-	sp_data& GetByIndex(int index) {
+	sp_data& GetByIndex(size_t index) {
 		return GetElemByIndex(index)->GetData();
 	}
 
-	Elem* GetElemByIndex(int index) {
+	Elem* GetElemByIndex(size_t index) {
 		CheckIndexWithThrow(index);
 
 		Elem* cur = m_first;
-		for (int i = 0; i < index; i++)
+		for (size_t i = 0; i < index; i++)
 			cur = cur->GetNext();
 		return cur;
 	}
 
-	bool CheckIndex(int index) const {
+	bool CheckIndex(size_t index) const {
 		return index >= 0 && index < m_size;
 	}
 
-	void CheckIndexWithThrow(int index) {
+	void CheckIndexWithThrow(size_t index) {
 		if (!CheckIndex(index))
+		{
+		#if KE_CONTAINER_DEBUG == 1
+			__debugbreak();
+		#endif
 			throw std::out_of_range("wrong index");
+		}	
 	}
 
 	sp_data& Push(sp_data& spdata) {
@@ -118,7 +124,7 @@ public:
 		return Push(sp_data(new Data(std::move(data))));
 	}
 
-	sp_data& Insert(Data&& data, int index) {
+	sp_data& Insert(Data&& data, size_t index) {
 		return Insert(sp_data(new Data(std::move(data))), index);
 	}
 
@@ -126,7 +132,7 @@ public:
 	/// Вставка data в позицию index. 
 	/// Старый элемент с позицией index будет смешен вперед.
 	/// </summary>
-	sp_data& Insert(sp_data& data, int index) {
+	sp_data& Insert(sp_data& data, size_t index) {
 		CheckIndexWithThrow(index);
 		Elem* newElem = new Elem(data);
 
@@ -190,7 +196,7 @@ public:
 
 		out_cur = m_first;
 		out_prev = nullptr;
-		int i = 0;
+		size_t i = 0;
 		while (out_cur != nullptr && !elem_func(*out_cur, i)) {
 			out_prev = out_cur;
 			out_cur = out_cur->GetNext();
@@ -202,16 +208,16 @@ public:
 	}
 
 	bool FindElemByDataFunc(func_find_data data_func, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
-		return FindElemByFunc([&data_func](const Elem& elem, int index) { return data_func(*elem.GetDataPtr(), index); }, out_prev, out_cur, out_next);
+		return FindElemByFunc([&data_func](const Elem& elem, size_t index) { return data_func(*elem.GetDataPtr(), index); }, out_prev, out_cur, out_next);
 	}
 
-	bool FindElemByIndex(int index, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
+	bool FindElemByIndex(size_t index, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
 		CheckIndexWithThrow(index);
-		return FindElemByDataFunc([index](const Data& d, int i) {return i == index}, out_prev, out_cur, out_next);
+		return FindElemByDataFunc([index](const Data& d, size_t i) {return i == index}, out_prev, out_cur, out_next);
 	}
 
 	bool FindElemByData(const Data& data, Elem*& out_prev, Elem*& out_cur, Elem*& out_next) const {
-		return FindElemByDataFunc([&data](const Data& d, int i) { return &d == &data; }, out_prev, out_cur, out_next);
+		return FindElemByDataFunc([&data](const Data& d, size_t i) { return &d == &data; }, out_prev, out_cur, out_next);
 	}
 
 	cp_data FindDataByElemFunc(func_find_elem elem_func, Elem*& out_prev) const {
@@ -229,7 +235,7 @@ public:
 
 	cp_data FindDataByFunc(func_find_data data_func, Elem*& prev) const
 	{
-		return FindDataByElemFunc([&data_func](const Elem& el, int index) { return data_func(*el.GetDataPtr(), index); }, prev);
+		return FindDataByElemFunc([&data_func](const Elem& el, size_t index) { return data_func(*el.GetDataPtr(), index); }, prev);
 	}
 
 	cp_data FindDataByFunc(func_find_data data_func) const
@@ -245,12 +251,12 @@ public:
 
 	bool Exists(const Data& data) const
 	{
-		return Exists([&data](const Data& d, int index) { return &d == &data; });
+		return Exists([&data](const Data& d, size_t index) { return &d == &data; });
 	}
 
 	bool Exists(Data&& data) const
 	{
-		return Exists([data](const Data& ddd, int index) { return ddd == data; });
+		return Exists([data](const Data& ddd, size_t index) { return ddd == data; });
 	}
 };
 

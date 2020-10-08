@@ -19,6 +19,58 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace Tests
 {
+	class V1 {
+	public:
+		int m_a;
+		V1(int a) : m_a(a) { }
+		virtual void Print() {
+			std::cout << "V1" << std::endl;
+		}
+
+	};
+
+	class V2 : public V1 {
+	public:
+		int m_b;
+		V2(int a, int b) : V1(a), m_b(b) { }
+
+		void Print() override {
+			std::cout << "V2" << std::endl;
+		}
+	};
+
+	class V3 : public V2 {
+	public:
+		long long m_c;
+		V3(int a, int b, long long c) : V2(a, b), m_c(c) { }
+	};
+
+	class V4 {
+	public:
+		int m_c;
+		long long m_d;
+		V4(int c, long long d) : m_c(c), m_d(d) { }
+	};
+
+	class V5 {
+	public:
+		int m_e;
+		V5(int e) : m_e(e) { }
+	};
+
+	class V6 : public V4, public V5 {
+	public:
+		int m_f;
+		int m_g;
+		char m_str1;
+		char m_str2;
+		int m_h;
+		V6(int c, int d, int e, int f, int g, int h) 
+			: V4(c,d), V5(e), m_f(f), m_g(g), m_h(h), m_str1('s'), m_str2('t')
+		{ 
+		}
+	};
+
 	struct A {
 		int a;
 		int b;
@@ -62,6 +114,27 @@ namespace Tests
 	{
 	public:
 
+		TEST_METHOD(TestVirtual) {
+
+			V1 v1(1);
+			V2 v2(1, 2);
+			V3 v3(1, 2, 3);
+
+			V4 v4(4, 5);
+			V5 v5(4);
+			V6 v6(4, 5, 6, 7, 8,9);
+
+
+			/*std::string info1("v1: " + std::to_string(sizeof(v1)) + "\n");
+			std::string info2("v2: " + std::to_string(sizeof(v2)) + "\n");
+			std::string info3("v3: " + std::to_string(sizeof(v3)) + "\n");
+
+			Logger::WriteMessage(info1.c_str());
+			Logger::WriteMessage(info2.c_str());
+			Logger::WriteMessage(info3.c_str());*/
+
+		}
+
 		TEST_METHOD(TestSmartPointers) {
 			Assert::IsTrue(true);
 			std::shared_ptr<A> a;
@@ -86,13 +159,13 @@ namespace Tests
 			auto d = list.Push({ 4,4 });
 			auto e = list.Push({ 5,5 });
 
-			auto c = list.Insert({3,3}, 2);
+			auto c = list.Insert({ 3,3 }, 2);
 
 			auto g = list.FindDataByElemFunc([](const LinkedList<A>::Elem& elem, int ind) { return elem.GetDataPtr()->a == 3; });
 			auto g2 = list.FindDataByFunc([](const LinkedList<A>::Data& data, int ind) { return data.a == 3; });
 			Assert::IsTrue(g == g2);
 
-			Assert::IsTrue(*c == *list.GetByIndex(2));
+			Assert::IsTrue(*c == *list[2]);
 
 			Assert::IsTrue(list.Exists(*a));
 			Assert::IsTrue(list.Exists(*b));
@@ -106,25 +179,26 @@ namespace Tests
 			PRINT_USECOUNT(d);
 			PRINT_USECOUNT(e);
 
-			Assert::AreEqual(list.GetSize(), 5);
+			list.GetSize() == 5;
+			Assert::IsTrue(list.GetSize() == 5);
 			Assert::IsTrue(&list.GetFirst() == &*a);
 			Assert::IsTrue(&list.GetLast() == &*e);
 
 			Assert::IsTrue(list.Remove(*a));
 			Assert::IsFalse(list.Exists(*a));
-			Assert::AreEqual(list.GetSize(), 4);
+			Assert::IsTrue(list.GetSize() == 4);
 			Assert::IsTrue(&list.GetFirst() == &*b);
 			Assert::IsTrue(&list.GetLast() == &*e);
 
 			Assert::IsTrue(list.Remove(*e));
 			Assert::IsFalse(list.Exists(*e));
-			Assert::AreEqual(list.GetSize(), 3);
+			Assert::IsTrue(list.GetSize() == 3);
 			Assert::IsTrue(&list.GetFirst() == &*b);
 			Assert::IsTrue(&list.GetLast() == &*d);
 
 			Assert::IsTrue(list.Remove(*c));
 			Assert::IsFalse(list.Exists(*c));
-			Assert::AreEqual(list.GetSize(), 2);
+			Assert::IsTrue(list.GetSize() == 2);
 			Assert::IsTrue(&list.GetFirst() == &*b);
 			Assert::IsTrue(&list.GetLast() == &*d);
 
@@ -135,7 +209,7 @@ namespace Tests
 
 			list.Clear();
 
-			Assert::AreEqual(list.GetSize(), 0);
+			Assert::IsTrue(list.GetSize() == 0);
 		}
 		TEST_METHOD(DynArrayTest)
 		{
@@ -145,7 +219,7 @@ namespace Tests
 			DynArray<int> b(a);
 			DynArray<int> c(DynArray<int>(10));
 			DynArray<int> d(std::move(DynArray<int>(10)));
-
+			
 			for (size_t i = 0; i < a.GetLength(); i++)
 			{
 				a[i] = i + 1;
