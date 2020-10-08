@@ -3,17 +3,28 @@
 #include "CApplication.h"
 
 namespace KE {
+
 	CApplication::CApplication()
 	{
+		auto fpsToNano = [](double maxFps) {
+			double nsFreq = 1.0 / maxFps * 1000000000.0;
+			return std::chrono::nanoseconds((long long)nsFreq);
+		};
+
+		m_updateTimer = std::make_unique<CLagger>(fpsToNano(3));
+		m_renderTimer = std::make_unique<CLagger>(fpsToNano(1));
 	}
 
 	CApplication::~CApplication()
 	{
+		if (m_graphics != nullptr)
+			delete m_graphics;
 	}
 
-	void CApplication::Update(float dt_sec)
+	int CApplication::InitGraphics(const CGraphics::InitData& initData)
 	{
-
+		m_graphics = new CGraphics();
+		return m_graphics->Initialize(initData);
 	}
 
 	void CApplication::Run()
@@ -28,23 +39,42 @@ namespace KE {
 		auto lastTime = clock::now();			// переменная последнего обновления фрейма
 		auto lag = std::chrono::nanoseconds(0);	// счётчик лага
 
-		double maxFps = 60;											// максимальное количество обновлений в секунду
-		double nsFreq = 1.0 / maxFps * 1000000000.0;				// частота обновления в ns
-		auto maxLag = std::chrono::nanoseconds((long long)nsFreq);	// ожидаемый лаг обновления в ns
-
 		KE_CORE_INFO("Running");
-		while (m_isRun) {
+		while (m_isRun || !m_graphics->ShouldClose()) {
 			auto curTime = clock::now();	// время на текущем фрейме
 			auto dft = curTime - lastTime;	// время между фреймами в ns.
 			lastTime = curTime;				// фиксация времени обновления кадра
-			lag += dft;						// Приращение лага
-			
-			if (lag > maxLag) {
-				float dt = 1.0f * lag.count() / 1000000000.0f; // время обновления в секундах
-				Update(dt);
-				lag = std::chrono::nanoseconds(0);
+
+			if (m_updateTimer->Update(dft)) {
+				Update(m_updateTimer->GetTimeFloat());
+			}
+
+			if (m_renderTimer->Update(dft)) {
+				Render();
 			}
 		}
+	}
+
+	void CApplication::Update(float dt_sec)
+	{
+
+	}
+
+	void CApplication::Render()
+	{
+		m_graphics->ClearScreen();
+		//m_graphics->SetViewport();
+
+		Render_Internal();
+
+		m_graphics->SwapBuffers();
+
+		m_graphics->PollEvents();
+	}
+
+	void CApplication::Render_Internal()
+	{
+
 	}
 
 	void CApplication::StopApplication()
