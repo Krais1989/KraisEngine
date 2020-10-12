@@ -3,9 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-
 namespace KE {
-	class CGraphics
+	class CGraphicsManager
 	{
 
 	public:
@@ -21,7 +20,7 @@ namespace KE {
 
 	public:
 
-		virtual ~CGraphics();
+		virtual ~CGraphicsManager();
 
 		int Initialize(const InitData& initData);
 		

@@ -2,9 +2,9 @@
 
 CSandbox::CSandbox() : KE::CApplication()
 {
-	KE::CGraphics::InitData graphicsData;
+	KE::CGraphicsManager::InitData graphicsData;
 	graphicsData.Width = 800;
-	graphicsData.Height= 600;
+	graphicsData.Height= 800;
 	graphicsData.Title = "KE Sandbox";
 
 

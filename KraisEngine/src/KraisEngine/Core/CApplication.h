@@ -2,8 +2,8 @@
 
 #include <ke_api_defines.h>
 #include <KraisEngine/Core/Log.h>
-#include <KraisEngine/Core/CGraphics.h>
-#include <KraisEngine/Core/CLagger.h>
+#include <KraisEngine/Core/CGraphicsManager.h>
+#include <KraisEngine/Core/CThrottler.h>
 
 namespace KE {
 
@@ -12,13 +12,13 @@ namespace KE {
 	private:
 		bool m_isRun = true;
 
-		CGraphics* m_graphics;
+		CGraphicsManager* m_graphics;
 
-		std::unique_ptr<CLagger> m_updateTimer;
-		std::unique_ptr<CLagger> m_renderTimer;
+		std::unique_ptr<CThrottler> m_updateTimer;
+		std::unique_ptr<CThrottler> m_renderTimer;
 
 	protected:
-		virtual int InitGraphics(const CGraphics::InitData& initData);
+		virtual int InitGraphics(const CGraphicsManager::InitData& initData);
 
 	public:
 		CApplication();
@@ -31,7 +31,7 @@ namespace KE {
 		virtual void Run();
 		virtual void StopApplication();
 
-		KE::CGraphics* GetGraphics() const { return m_graphics; }
+		KE::CGraphicsManager* GetGraphics() const { return m_graphics; }
 
 	protected:
 		/// <summary>

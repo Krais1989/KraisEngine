@@ -7,7 +7,12 @@ bin-int/
 **.vcxproj.filters
 **.vcxproj.user
 
-project_builds/
 **/x64/
 **/Debug/
 **/Release/
+
+*.dir/
+x64/
+
+CMakeFiles/
+_CPack_Packages/

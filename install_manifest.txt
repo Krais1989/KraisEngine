@@ -1,0 +1,9 @@
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/lib/glfw3.lib
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/include/GLFW/glfw3.h
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/include/GLFW/glfw3native.h
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/lib/cmake/glfw3/glfw3Config.cmake
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/lib/cmake/glfw3/glfw3ConfigVersion.cmake
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/lib/cmake/glfw3/glfw3Targets.cmake
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/lib/cmake/glfw3/glfw3Targets-debug.cmake
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/lib/pkgconfig/glfw3.pc
+E:/Projects/CPP/KraisEngine/_CPack_Packages/win64/NSIS/KraisEngine-0.1.1-win64/bin/Sandbox.exe

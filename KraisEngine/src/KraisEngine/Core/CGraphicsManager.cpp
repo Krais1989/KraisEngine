@@ -1,16 +1,16 @@
 #include "ke_pch.h"
-#include "CGraphics.h"
+#include "CGraphicsManager.h"
 
 namespace KE {
 
-	CGraphics::~CGraphics()
+	CGraphicsManager::~CGraphicsManager()
 	{
 		if (m_window != nullptr)
 			glfwDestroyWindow(m_window);
 		glfwTerminate();
 	}
 
-	int CGraphics::Initialize(const InitData& initData)
+	int CGraphicsManager::Initialize(const InitData& initData)
 	{
 		if (!glfwInit()) {
 			return -1;
@@ -40,32 +40,32 @@ namespace KE {
 		return 0;
 	}
 
-	bool CGraphics::ShouldClose()
+	bool CGraphicsManager::ShouldClose()
 	{
 		return glfwWindowShouldClose(m_window);
 	}
 
-	void CGraphics::PollEvents()
+	void CGraphicsManager::PollEvents()
 	{
 		glfwPollEvents();
 	}
 
-	void CGraphics::SwapBuffers()
+	void CGraphicsManager::SwapBuffers()
 	{
 		glfwSwapBuffers(m_window);
 	}
 
-	void CGraphics::ClearScreen()
+	void CGraphicsManager::ClearScreen()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void CGraphics::ClearColor(float r, float g, float b, float a)
+	void CGraphicsManager::ClearColor(float r, float g, float b, float a)
 	{
 		glClearColor(r, g, b, a);
 	}
 
-	void CGraphics::SetViewport(int ox, int oy, int width, int height)
+	void CGraphicsManager::SetViewport(int ox, int oy, int width, int height)
 	{
 		glViewport(ox, oy, width, height);
 	}

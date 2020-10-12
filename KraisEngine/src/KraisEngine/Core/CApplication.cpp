@@ -11,8 +11,8 @@ namespace KE {
 			return std::chrono::nanoseconds((long long)nsFreq);
 		};
 
-		m_updateTimer = std::make_unique<CLagger>(fpsToNano(3));
-		m_renderTimer = std::make_unique<CLagger>(fpsToNano(1));
+		m_updateTimer = std::make_unique<CThrottler>(fpsToNano(3));
+		m_renderTimer = std::make_unique<CThrottler>(fpsToNano(1));
 	}
 
 	CApplication::~CApplication()
@@ -21,9 +21,9 @@ namespace KE {
 			delete m_graphics;
 	}
 
-	int CApplication::InitGraphics(const CGraphics::InitData& initData)
+	int CApplication::InitGraphics(const CGraphicsManager::InitData& initData)
 	{
-		m_graphics = new CGraphics();
+		m_graphics = new CGraphicsManager();
 		return m_graphics->Initialize(initData);
 	}
 
