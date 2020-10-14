@@ -18,9 +18,8 @@ if (NOT DEFINED CMAKE_BUILD_TYPE)
 endif()
 message(CMAKE_BUILD_TYPE>${CMAKE_BUILD_TYPE})
 
-add_subdirectory(vendor/spdlog)
-add_subdirectory(KraisEngine/vendor/glad)
-add_subdirectory(KraisEngine/vendor/glfw)
+add_subdirectory(KraisEngine)
+add_subdirectory(Sandbox)
 
 set_target_properties(glfw PROPERTIES FOLDER "VENDOR")
 set_target_properties(uninstall PROPERTIES FOLDER "VENDOR")
@@ -28,8 +27,7 @@ set_target_properties(glad PROPERTIES FOLDER "VENDOR")
 set_target_properties(glad-generate-files PROPERTIES FOLDER "VENDOR")
 set_target_properties(spdlog PROPERTIES FOLDER "VENDOR")
 
-add_subdirectory(KraisEngine)
-add_subdirectory(Sandbox)
+
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/debug) 
 

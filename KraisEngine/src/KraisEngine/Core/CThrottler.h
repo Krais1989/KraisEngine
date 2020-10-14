@@ -1,10 +1,12 @@
 #pragma once
 
+#include <KraisEngine/Core/Core.h>
+
 /// <summary>
 /// Класс для фиксации периодов обновления
 /// (Например, используется для фиксации периодов обновления и рендера приложения)
 /// </summary>
-class CThrottler
+class KE_API CThrottler
 {
 public:
 	using Time = std::chrono::nanoseconds;

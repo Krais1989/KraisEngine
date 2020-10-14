@@ -34,21 +34,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/Projects/CPP/KraisEngine/vendor/spdlog/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("E:/Projects/CPP/KraisEngine/KraisEngine/vendor/glad/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("E:/Projects/CPP/KraisEngine/KraisEngine/vendor/glfw/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
   include("E:/Projects/CPP/KraisEngine/KraisEngine/cmake_install.cmake")
 endif()
 

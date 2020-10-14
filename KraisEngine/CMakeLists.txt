@@ -6,16 +6,17 @@ message(KE_HEADERS:  ${KE_HEADERS})
 add_library(KraisEngine STATIC ${KE_SOURCES} ${KE_HEADERS})
 set_property(TARGET KraisEngine PROPERTY CXX_STANDARD 17)
 
-#find_package(glad PATHS KraisEngine/vendor/glad)
-#find_package(glfw PATHS KraisEngine/vendor/glfw)
+add_subdirectory(vendor/spdlog)
+add_subdirectory(vendor/glad)
+add_subdirectory(vendor/glfw)
 
-#file(GLOB_RECURSE IMGUI_HEADERS ${CMAKE_SOURCE_DIR}/vendor/imgui/*.h)
-#file(GLOB_RECURSE IMGUI_SOURCES ${CMAKE_SOURCE_DIR}/vendor/imgui/*.cpp)
-#target_sources(KraisEngine PUBLIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
+find_package(OpenGL REQUIRED)
 
-target_link_libraries(KraisEngine PRIVATE spdlog)
+target_link_libraries(KraisEngine PUBLIC spdlog)
 target_link_libraries(KraisEngine PUBLIC glad)
 target_link_libraries(KraisEngine PUBLIC glfw)
+
+target_link_libraries(KraisEngine PUBLIC opengl32)
 
 target_include_directories(KraisEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 

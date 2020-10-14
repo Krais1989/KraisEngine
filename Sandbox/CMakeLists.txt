@@ -11,7 +11,6 @@ add_executable(Sandbox ${SANDBOX_SOURCES} ${SANDBOX_HEADERS})
 set_property(TARGET Sandbox PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(Sandbox PRIVATE KraisEngine)
-target_link_libraries(Sandbox PRIVATE spdlog)
 
 # Решает проблему копирования библиотеки KraisEngine в Sandbox при билде из IDE
 add_dependencies(Sandbox KraisEngine)

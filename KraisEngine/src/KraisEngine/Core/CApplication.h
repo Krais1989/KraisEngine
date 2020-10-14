@@ -1,24 +1,21 @@
 #pragma once
 
-#include <ke_api_defines.h>
-#include <KraisEngine/Core/Log.h>
-#include <KraisEngine/Core/CGraphicsManager.h>
+#include <KraisEngine/Core/Core.h>
 #include <KraisEngine/Core/CThrottler.h>
 
-namespace KE {
+#include <KraisEngine/Core/CWindow.h>
 
-	class KRAIS_API CApplication
+namespace KE {
+	 
+	class KE_API CApplication
 	{
 	private:
-		bool m_isRun = true;
-
-		CGraphicsManager* m_graphics;
+		bool m_Running = true;
 
 		std::unique_ptr<CThrottler> m_updateTimer;
 		std::unique_ptr<CThrottler> m_renderTimer;
 
-	protected:
-		virtual int InitGraphics(const CGraphicsManager::InitData& initData);
+		std::unique_ptr<CWindow> m_Window;
 
 	public:
 		CApplication();
@@ -30,8 +27,6 @@ namespace KE {
 		/// </summary>
 		virtual void Run();
 		virtual void StopApplication();
-
-		KE::CGraphicsManager* GetGraphics() const { return m_graphics; }
 
 	protected:
 		/// <summary>
@@ -45,10 +40,8 @@ namespace KE {
 		/// </summary>
 		virtual void Render();
 
-		/// <summary>
-		/// Внутренний метод для отрисовки
-		/// </summary>
-		virtual void Render_Internal();
+		void OnEvent(CEvent&);
+
 	};
 
 	/* Определить в приложении */

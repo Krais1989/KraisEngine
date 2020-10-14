@@ -1,30 +1,24 @@
 #include <ke_pch.h>
-
 #include "CApplication.h"
 
 namespace KE {
 
 	CApplication::CApplication()
 	{
+		m_Window = std::unique_ptr<CWindow>(CWindow::Create());
+		m_Window->SetEventCallback(std::bind(&CApplication::OnEvent, this, std::placeholders::_1));
+
 		auto fpsToNano = [](double maxFps) {
 			double nsFreq = 1.0 / maxFps * 1000000000.0;
 			return std::chrono::nanoseconds((long long)nsFreq);
 		};
 
-		m_updateTimer = std::make_unique<CThrottler>(fpsToNano(3));
-		m_renderTimer = std::make_unique<CThrottler>(fpsToNano(1));
+		m_updateTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(3)));
+		m_renderTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(1)));
 	}
 
 	CApplication::~CApplication()
 	{
-		if (m_graphics != nullptr)
-			delete m_graphics;
-	}
-
-	int CApplication::InitGraphics(const CGraphicsManager::InitData& initData)
-	{
-		m_graphics = new CGraphicsManager();
-		return m_graphics->Initialize(initData);
 	}
 
 	void CApplication::Run()
@@ -35,12 +29,11 @@ namespace KE {
 		*/
 
 		using clock = std::chrono::high_resolution_clock;
-
 		auto lastTime = clock::now();			// переменная последнего обновления фрейма
 		auto lag = std::chrono::nanoseconds(0);	// счётчик лага
 
 		KE_CORE_INFO("Running");
-		while (m_isRun || !m_graphics->ShouldClose()) {
+		while (m_Running) {
 			auto curTime = clock::now();	// время на текущем фрейме
 			auto dft = curTime - lastTime;	// время между фреймами в ns.
 			lastTime = curTime;				// фиксация времени обновления кадра
@@ -52,34 +45,39 @@ namespace KE {
 			if (m_renderTimer->Update(dft)) {
 				Render();
 			}
+
+			m_Window->OnUpdate();
 		}
 	}
 
 	void CApplication::Update(float dt_sec)
 	{
-
 	}
 
 	void CApplication::Render()
 	{
-		m_graphics->ClearScreen();
-		//m_graphics->SetViewport();
-
-		Render_Internal();
-
-		m_graphics->SwapBuffers();
-
-		m_graphics->PollEvents();
 	}
 
-	void CApplication::Render_Internal()
+	void CApplication::OnEvent(CEvent& ev)
 	{
+		KE_CORE_INFO("{0}", ev.ToString());
+
+		if (ev.GetEventCategory() == KE_EventCategory_Application) {
+			switch (ev.GetEventType())
+			{
+			case EEventType::WindowResize:
+				break;
+			case EEventType::WindowClose:
+				m_Running = false;
+				break;
+			}
+		}
 
 	}
 
 	void CApplication::StopApplication()
 	{
-		m_isRun = false;
+		m_Running = false;
 	}
 
 }

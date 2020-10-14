@@ -371,6 +371,12 @@ MEMORYCHECK_COMMAND:FILEPATH=MEMORYCHECK_COMMAND-NOTFOUND
 //File that contains suppressions for the memory checker
 MEMORYCHECK_SUPPRESSIONS_FILE:FILEPATH=
 
+//OpenGL library for win32
+OPENGL_gl_LIBRARY:STRING=opengl32
+
+//GLU library for win32
+OPENGL_glu_LIBRARY:STRING=glu32
+
 //Path to a program.
 P4COMMAND:FILEPATH=P4COMMAND-NOTFOUND
 
@@ -469,10 +475,10 @@ spdlog-utests_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine/vendor/spdlog/tests
 spdlog-utests_SOURCE_DIR:STATIC=E:/Projects/CPP/KraisEngine/vendor/spdlog/tests
 
 //Value Computed by CMake
-spdlog_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine/vendor/spdlog
+spdlog_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine/KraisEngine/vendor/spdlog
 
 //Value Computed by CMake
-spdlog_SOURCE_DIR:STATIC=E:/Projects/CPP/KraisEngine/vendor/spdlog
+spdlog_SOURCE_DIR:STATIC=E:/Projects/CPP/KraisEngine/KraisEngine/vendor/spdlog
 
 
 ########################
@@ -657,6 +663,8 @@ CVS_UPDATE_OPTIONS-ADVANCED:INTERNAL=1
 DART_TESTING_TIMEOUT-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: DOXYGEN_EXECUTABLE
 DOXYGEN_EXECUTABLE-ADVANCED:INTERNAL=1
+//Details about finding OpenGL
+FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[opengl32][c ][v()]
 //Details about finding Python
 FIND_PACKAGE_MESSAGE_DETAILS_Python:INTERNAL=[C:/Program Files (x86)/Python37-32/python.exe][cfound components: Interpreter ][v3.7.3()]
 //Details about finding Threads
@@ -671,6 +679,10 @@ MAKECOMMAND-ADVANCED:INTERNAL=1
 MEMORYCHECK_COMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MEMORYCHECK_SUPPRESSIONS_FILE
 MEMORYCHECK_SUPPRESSIONS_FILE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENGL_gl_LIBRARY
+OPENGL_gl_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENGL_glu_LIBRARY
+OPENGL_glu_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: P4COMMAND
 P4COMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: SITE

@@ -1,9 +1,9 @@
 [submodule "KraisEngine/vendor/glad"]
 	path = KraisEngine/vendor/glad
 	url = https://github.com/Dav1dde/glad.git
-[submodule "vendor/spdlog"]
-	path = vendor/spdlog
-	url = https://github.com/gabime/spdlog.git
 [submodule "KraisEngine/vendor/glfw"]
 	path = KraisEngine/vendor/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "KraisEngine/vendor/spdlog"]
+	path = KraisEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
