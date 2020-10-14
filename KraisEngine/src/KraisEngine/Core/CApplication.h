@@ -6,11 +6,13 @@
 
 #include <KraisEngine/Events/WindowEvents.h>
 
+#include <KraisEngine/Core/CLayerStack.h>
+
 namespace KE {
-	 
+
 	class KE_API CApplication
 	{
-	private:
+	protected:
 		bool m_Running = true;
 
 		std::unique_ptr<CThrottler> m_updateTimer;
@@ -18,32 +20,25 @@ namespace KE {
 
 		std::unique_ptr<CWindow> m_Window;
 
+		CLayerStack m_LayerStack;
+
 		bool OnWindowClose(const CWindowCloseEvent& ev);
+		virtual void Update(float dt_sec);
+		virtual void Render();
 
 	public:
 		CApplication();
 
 		virtual ~CApplication();
 
-		/// <summary>
 		/// Метод работы приложения
 		/// </summary>
 		virtual void Run();
 		virtual void StopApplication();
+		void PushLayer(CLayer* layer);
+		void PushOverlay(CLayer* layer);
 
-	protected:
-		/// <summary>
-		/// Обновление логики приложения
-		/// </summary>
-		/// <param name="dt_sec"></param>
-		virtual void Update(float dt_sec);
-
-		/// <summary>
-		/// Базовый метод для отрисовки. Вызывает очистку экрана, смену буфферов
-		/// </summary>
-		virtual void Render();
-
-		void OnEvent(CEvent&);
+		void OnEvent(CEvent& ev);
 
 	};
 

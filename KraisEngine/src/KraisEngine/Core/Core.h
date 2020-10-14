@@ -21,4 +21,4 @@
 
 #define BIT(x) (1 << x)
 
-#define EVENT_BIND(cb) std::bind(cb, this, std::placeholders::_1)
+#define BIND_EVENT_FN(cb) std::bind(cb, this, std::placeholders::_1)

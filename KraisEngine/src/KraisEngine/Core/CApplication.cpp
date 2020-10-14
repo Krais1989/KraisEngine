@@ -12,7 +12,7 @@ namespace KE {
 	CApplication::CApplication()
 	{
 		m_Window = std::unique_ptr<CWindow>(CWindow::Create());
-		m_Window->SetEventCallback(EVENT_BIND(&CApplication::OnEvent));
+		m_Window->SetEventCallback(BIND_EVENT_FN(&CApplication::OnEvent));
 
 		auto fpsToNano = [](double maxFps) {
 			double nsFreq = 1.0 / maxFps * 1000000000.0;
@@ -58,6 +58,9 @@ namespace KE {
 
 	void CApplication::Update(float dt_sec)
 	{
+		for (CLayer* layer : m_LayerStack) {
+			layer->OnUpdate(dt_sec);
+		}
 	}
 
 	void CApplication::Render()
@@ -66,28 +69,34 @@ namespace KE {
 
 	void CApplication::OnEvent(CEvent& ev)
 	{
-		KE_CORE_INFO("{0}", ev.ToString());
+		//KE_CORE_INFO("{0}", ev.ToString());
 
 		CEventDispatcher dispatcher(ev);
-		dispatcher.Dispatch<CWindowCloseEvent>(EVENT_BIND(&CApplication::OnWindowClose));
+		dispatcher.Dispatch<CWindowCloseEvent>(BIND_EVENT_FN(&CApplication::OnWindowClose));
 
-		//if (ev.GetEventCategory() == KE_EventCategory_Application) {
-		//	switch (ev.GetEventType())
-		//	{
-		//	case EEventType::WindowResize:
-		//		break;
-		//	case EEventType::WindowClose:
-		//		m_Running = false;
-		//		break;
-		//	}
-		//}
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
+			if (ev.Handled)
+				break;
+			(*it)->OnEvent(ev);
+		}
+	}
 
+	void CApplication::PushLayer(CLayer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void CApplication::PushOverlay(CLayer* layer)
+	{
+		m_LayerStack.PushOverlay(layer);
 	}
 
 	void CApplication::StopApplication()
 	{
 		m_Running = false;
 	}
+
+
 
 }
 
