@@ -5,11 +5,18 @@
 
 namespace KE
 {
+#define KE_EVENT_TYPE(event_type) static EEventType GetStaticType() { return EEventType::event_type; }\
+								virtual EEventType GetEventType() const override { return GetStaticType(); }\
+								virtual const char* GetEventName() const override { return #event_type; }
+
+#define KE_EVENT_CATEGORY_FLAGS(event_category) virtual int GetEventCategory() const override { return event_category; }
+
+
 	enum class EEventType {
 		None = 0,
 		WindowResize, WindowClose, WindowFocus, WindowLostFocus, WindowMoved,
-		KeyPressed, KeyReleased,
-		MousePressed, MouseReleased, MouseMoved, MouseScrolled
+		KeyPressed, KeyReleased, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 	enum EEventCategory {
@@ -21,13 +28,6 @@ namespace KE
 		KE_EventCategory_Mouse = BIT(3),
 		KE_EventCategory_MouseButton = BIT(4)
 	};
-
-#define KE_EVENT_TYPE(event_type) static EEventType GetStaticType() { return EEventType::event_type; }\
-								virtual EEventType GetEventType() const override { return GetStaticType(); }\
-								virtual const char* GetEventName() const override { return #event_type; }
-
-#define KE_EVENT_CATEGORY_FLAGS(event_category) virtual int GetEventCategory() const override { return event_category; }
-
 
 	class KE_API CEvent
 	{
@@ -68,29 +68,4 @@ namespace KE
 	{
 		return os << e.ToString();
 	}
-
-	class KE_API CWindowCloseEvent : public CEvent {
-	public:
-		KE_EVENT_TYPE(WindowClose);
-		KE_EVENT_CATEGORY_FLAGS(KE_EventCategory_Application);
-	};
-
-	class KE_API CWindowResizeEvent : public CEvent {
-	public:
-		KE_EVENT_TYPE(WindowResize);
-		KE_EVENT_CATEGORY_FLAGS(KE_EventCategory_Application);
-
-		int Width;
-		int Height;
-
-		CWindowResizeEvent(int width, int height)
-			: Width(width), Height(height) {
-		}
-
-		virtual std::string ToString() const {
-			std::stringstream ss;
-			ss << GetEventName() << "(" << Width << ":" << Height << ")";
-			return ss.str();
-		}
-	};
 }
