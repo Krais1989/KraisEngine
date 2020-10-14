@@ -2,8 +2,9 @@
 
 #include <KraisEngine/Core/Core.h>
 #include <KraisEngine/Core/CThrottler.h>
-
 #include <KraisEngine/Core/CWindow.h>
+
+#include <KraisEngine/Events/WindowEvents.h>
 
 namespace KE {
 	 
@@ -16,6 +17,8 @@ namespace KE {
 		std::unique_ptr<CThrottler> m_renderTimer;
 
 		std::unique_ptr<CWindow> m_Window;
+
+		bool OnWindowClose(const CWindowCloseEvent& ev);
 
 	public:
 		CApplication();

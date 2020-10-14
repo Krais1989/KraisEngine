@@ -20,3 +20,5 @@
 #include <KraisEngine/Core/Log.h>
 
 #define BIT(x) (1 << x)
+
+#define EVENT_BIND(cb) std::bind(cb, this, std::placeholders::_1)

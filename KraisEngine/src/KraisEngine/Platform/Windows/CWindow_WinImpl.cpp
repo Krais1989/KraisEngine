@@ -1,5 +1,4 @@
 
-#include <ke_pch.h>
 #include "CWindow_WinImpl.h"
 
 #include <KraisEngine/Events/WindowEvents.h>
@@ -14,7 +13,6 @@ namespace KE
 		return new CWindow_WinImpl(data);
 	}
 
-
 	CWindow_WinImpl::CWindow_WinImpl(const SWindowProps& data)
 	{
 		Init(data);
@@ -27,6 +25,11 @@ namespace KE
 
 	void CWindow_WinImpl::OnUpdate()
 	{
+		glClearColor(1, .6, .5, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+
+		glfwSwapBuffers(m_Window);
 		glfwPollEvents();
 	}
 
@@ -80,8 +83,13 @@ namespace KE
 			m_GLFWInitialized = true;
 		}
 
+
 		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+
+		int gladInitRes = gladLoadGL();
+		KE_CORE_ASSERT(gladInitRes, "GLAD Initialization error");
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -91,6 +99,8 @@ namespace KE
 			data.Width = width;
 			data.Height = height;
 
+			glViewport(0, 0, width, height);
+
 			data.EventCallback(CWindowResizeEvent(width, height));
 			});
 
@@ -98,6 +108,12 @@ namespace KE
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* win) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.EventCallback(CWindowCloseEvent());
+			});
+
+		// typedef void (* GLFWcharfun)(GLFWwindow*,unsigned int);
+		glfwSetCharCallback(m_Window, [](GLFWwindow* win, unsigned int code) {
+			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
+			data.EventCallback(CKeyTypedEvent(code));
 			});
 
 		//typedef void (* GLFWkeyfun)(GLFWwindow*,int,int,int,int);
@@ -143,12 +159,6 @@ namespace KE
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* win, double xo, double yo) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.EventCallback(CMouseScrollEvent((float)xo, (float)yo));
-			});
-
-		// typedef void (* GLFWcharfun)(GLFWwindow*,unsigned int);
-		glfwSetCharCallback(m_Window, [](GLFWwindow* win, unsigned int code) {
-			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
-			data.EventCallback(CKeyTypedEvent(code));
 			});
 
 		// typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
