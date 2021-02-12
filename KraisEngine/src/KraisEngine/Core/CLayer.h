@@ -10,6 +10,7 @@ namespace KE
 	{
 	public:
 	
+		virtual void OnRender();
 		virtual void OnAttach();
 		virtual void OnDetach();
 		virtual void OnUpdate(float dt);

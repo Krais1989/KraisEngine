@@ -1,13 +1,22 @@
-#include "CSandbox.h"
+#include <KraisEngine.h>
+#include <KraisEngine/EntryPoint.h>
 
-CSandbox::CSandbox() : KE::CApplication()
+#include "Layers/CTestOpenGLLayer.h"
+
+class CSandbox : public KE::CApplication
 {
-	PushOverlay(new TestOverlay());
-	PushLayer(new TestLayer());
-	PushLayer(new TestLayer2());
-}
+public:
+	CSandbox() {
+		PushLayer(new CTestOpenGLLayer());
+		//PushLayer(new TestLayer());
+		/*PushOverlay(new TestOverlay());
+		PushLayer(new TestLayer2())*/;
+	}
+	~CSandbox() override {
 
-CSandbox::~CSandbox()
-{
+	}
+};
 
+KE::CApplication* KE::CreateApplication() {
+	return new CSandbox();
 }

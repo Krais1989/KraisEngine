@@ -5,6 +5,12 @@
 #include <KraisEngine/Events/KeyEvents.h>
 #include <KraisEngine/Events/MouseEvents.h>
 
+#include "Platform/OpenGL/COpenGLContext.h"
+
+//#include <imgui.h>
+//#include <backends/imgui_impl_glfw.h>
+//#include <backends/imgui_impl_opengl3.h>
+
 namespace KE
 {
 	static bool m_GLFWInitialized = false;
@@ -21,16 +27,6 @@ namespace KE
 	CWindow_WinImpl::~CWindow_WinImpl()
 	{
 		Shutdown();
-	}
-
-	void CWindow_WinImpl::OnUpdate()
-	{
-		glClearColor(1, .6, .5, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		glfwSwapBuffers(m_Window);
-		glfwPollEvents();
 	}
 
 	const std::string& CWindow_WinImpl::GetTitle() const
@@ -83,16 +79,20 @@ namespace KE
 			m_GLFWInitialized = true;
 		}
 
-
 		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
 
-		int gladInitRes = gladLoadGL();
-		KE_CORE_ASSERT(gladInitRes, "GLAD Initialization error");
+		m_GraphicsContext = CGraphicsContext::Create(m_Window);
+		m_GraphicsContext->Init();
 
-		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
+		float verticies[] = {
+			-.5f, -.5f, 0,
+			0, .5f, 0,
+			.5f, .5f, 0
+		};
+
+		glfwSetWindowUserPointer(m_Window, &m_Data);
 		// (* GLFWwindowsizefun)(GLFWwindow*,int,int);
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* win, int width, int height) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
@@ -167,6 +167,22 @@ namespace KE
 			data.EventCallback(CMouseMoveEvent(mx, my));
 			});
 
+
+		/* IMGUI INIT */
+		//IMGUI_CHECKVERSION();
+		//ImGui::CreateContext();
+		//ImGuiIO& io = ImGui::GetIO();
+		//// Setup Platform/Renderer bindings
+		//ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+		//ImGui_ImplOpenGL3_Init((const char*)"#version 130");
+		//// Setup Dear ImGui style
+		//ImGui::StyleColorsDark();
+	}
+
+	void CWindow_WinImpl::OnUpdate()
+	{
+		glfwPollEvents();
+		m_GraphicsContext->SwapBuffer();		
 	}
 
 	void CWindow_WinImpl::Shutdown()

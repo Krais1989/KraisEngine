@@ -3,6 +3,11 @@
 namespace KE
 {
 	
+	void CLayer::OnRender()
+	{
+
+	}
+
 	void CLayer::OnAttach()
 	{
 		KE_CORE_INFO("Layer OnAttach: {0}", GetDebugName());

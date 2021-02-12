@@ -31,10 +31,15 @@ public:
 	void SetPeriod(Time val) { m_period = val; }
 
 	/// <summary>
-	///  в секундах с плавающей точкой
+	/// Текущее время тротлинга в секундах
 	/// </summary>
 	float GetTimeFloat() const { return m_timeF; }
 
+	/// <summary>
+	/// Добавляет к m_time продолжительность dt
+	/// </summary>
+	/// <param name="dt">прошедший промежуток времени</param>
+	/// <returns>true - если m_time перешел промежуток m_period, иначе - false</returns>
 	bool Update(Time dt) {
 		m_time += dt;
 		if (m_time > m_period) {

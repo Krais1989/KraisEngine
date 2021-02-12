@@ -1,6 +1,8 @@
 #include <ke_pch.h>
 #include "CApplication.h"
 
+#include <glad/glad.h>
+
 namespace KE {
 
 	bool CApplication::OnWindowClose(const CWindowCloseEvent& ev)
@@ -19,8 +21,8 @@ namespace KE {
 			return std::chrono::nanoseconds((long long)nsFreq);
 		};
 
-		m_updateTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(3)));
-		m_renderTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(1)));
+		m_updateTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(60)));
+		m_renderTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(60)));
 	}
 
 	CApplication::~CApplication()
@@ -51,8 +53,6 @@ namespace KE {
 			if (m_renderTimer->Update(dft)) {
 				Render();
 			}
-
-			m_Window->OnUpdate();
 		}
 	}
 
@@ -65,6 +65,14 @@ namespace KE {
 
 	void CApplication::Render()
 	{
+		glClearColor(.6f, .6f, .1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		for (CLayer* layer : m_LayerStack) {
+			layer->OnRender();
+		}
+
+		m_Window->OnUpdate();
 	}
 
 	void CApplication::OnEvent(CEvent& ev)

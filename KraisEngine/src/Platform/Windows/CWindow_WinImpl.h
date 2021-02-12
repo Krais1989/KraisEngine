@@ -2,8 +2,9 @@
 
 #include <ke_pch.h>
 #include <KraisEngine/Core/CWindow.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "KraisEngine/Render/CGraphicsContext.h"
+
+struct GLFWwindow;
 
 namespace KE
 {
@@ -15,26 +16,13 @@ namespace KE
 		CWindow_WinImpl(const SWindowProps& prop);
 		virtual ~CWindow_WinImpl();
 
-
 		void OnUpdate() override;
-
-
 		const std::string& GetTitle() const override;
-
-
 		unsigned int GetWidth() const override;
-
-
 		unsigned int GetHeight() const override;
-
-
 		void SetVSync(bool enable) override;
-
-
 		bool IsVSyncEnabled() const override;
-
-
-		virtual void SetEventCallback(const EventCallbackFn& evCallback);
+		void SetEventCallback(const EventCallbackFn& evCallback) override;
 
 	private:
 		void Init(const SWindowProps& prop);
@@ -42,6 +30,7 @@ namespace KE
 
 	private:
 		GLFWwindow* m_Window;
+		std::unique_ptr<CGraphicsContext> m_GraphicsContext;
 
 		/// <summary>
 		/// Данные для пробрасывание в GLFW колбеки
@@ -56,7 +45,6 @@ namespace KE
 			// Указатель на функцию отравки событий 
 			// EventCallbackFn EventCallback;
 		};
-
 		SWindowData m_Data;
 	};
 }

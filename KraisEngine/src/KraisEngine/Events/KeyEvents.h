@@ -16,6 +16,13 @@ namespace KE
 			return ss.str();
 		}
 
+		KeyCode GetKey() const { return m_Key; }
+
+		virtual ~CKeyEvent()
+		{
+			//KE_INFO("Destruct");
+		}
+
 	protected:
 		CKeyEvent(KeyCode key) : m_Key(key) {}
 		KeyCode m_Key;

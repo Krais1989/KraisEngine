@@ -5,8 +5,9 @@
 #include <KraisEngine/Core/CWindow.h>
 
 #include <KraisEngine/Events/WindowEvents.h>
-
 #include <KraisEngine/Core/CLayerStack.h>
+
+int main(int argc, char** argv);
 
 namespace KE {
 
@@ -40,10 +41,13 @@ namespace KE {
 
 		void OnEvent(CEvent& ev);
 
+
+		static CApplication& Get() { return *m_Instance; }
+	private:
+		static CApplication* m_Instance;
+		friend int ::main(int argc, char** argv);
 	};
 
 	/* Определить в приложении */
 	CApplication* CreateApplication();
 }
-
-
