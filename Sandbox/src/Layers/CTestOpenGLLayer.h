@@ -39,10 +39,14 @@ protected:
 	void LoadTestBuffers();
 
 	void LoadShader(std::string name, fs::path vert, fs::path frag);
-	void LoadBuffer(const float* verts, size_t vertsSize, const unsigned int* inds, size_t indsSize);
+	void LoadBufferVertElem(const float* verts, size_t vertsSize, const unsigned int* inds, size_t indsSize);
+	void LoadBufferVertElemUV(const float* verts, size_t vertsSize, const unsigned int* inds, size_t indsSize);
 private:
 	float m_Time;
 	glm::mat4 m_Model;
 	glm::mat4 m_View;
 	glm::mat4 m_Projection;
+
+	std::shared_ptr<KE::CTexture2D> m_TextureWall;
+	std::shared_ptr<KE::CTexture2D> m_TextureStone;
 };

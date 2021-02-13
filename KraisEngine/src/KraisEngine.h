@@ -9,3 +9,5 @@
 #include "KraisEngine/Core/CAsset.h"
 
 #include "KraisEngine/Render/CShader.h"
+
+#include "KraisEngine/Core/CTexture2D.h"

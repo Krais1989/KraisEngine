@@ -9,11 +9,16 @@
 KE::COpenGLShader::COpenGLShader(std::string name, const char* vert_data, const char* frag_data)
 	:m_Name(name)
 {
+	KE_CORE_INFO("CTOR>>> OpenGL Shader");
+
 	Compile(vert_data, frag_data);
 }
 
 GLint KE::COpenGLShader::Compile(const char* vert_data, const char* frag_data)
 {
+	KE_CORE_INFO("Vertex shader:\n{0}", vert_data);
+	KE_CORE_INFO("Fragment shader:\n{0}", frag_data);
+
 	m_ProgramID = glCreateProgram();
 
 	auto vert = AddShader(vert_data, GL_VERTEX_SHADER);
@@ -63,6 +68,12 @@ void KE::COpenGLShader::SetMatrix4f(const char* name, glm::mat4& mat)
 {
 	GLint loc = glGetUniformLocation(m_ProgramID, name);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void KE::COpenGLShader::SetInt(const char* name, int i)
+{
+	GLint loc = glGetUniformLocation(m_ProgramID, name);
+	glUniform1i(loc, i);
 }
 
 GLuint KE::COpenGLShader::AddShader(const char* data, GLenum type)

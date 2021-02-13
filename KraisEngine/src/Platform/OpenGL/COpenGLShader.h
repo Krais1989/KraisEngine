@@ -20,6 +20,12 @@ namespace KE {
 
 		virtual void SetMatrix4f(const char* name, glm::mat4& mat);
 
+
+		virtual void SetInt(const char* name, int i);
+
+
+		virtual unsigned int GetID() const { return m_ProgramID; }
+
 	protected:
 		unsigned int m_ProgramID;
 		std::string m_Name;

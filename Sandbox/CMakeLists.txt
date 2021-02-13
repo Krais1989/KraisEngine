@@ -17,9 +17,7 @@ target_link_libraries(Sandbox PRIVATE KraisEngine)
 
 # Решает проблему копирования библиотеки KraisEngine в Sandbox при билде из IDE
 add_dependencies(Sandbox KraisEngine)
-
-
 message(PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR})
 message(PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR})
 
-add_custom_command(TARGET Sandbox POST_BUILD COMMAND xcopy /i /e /s /y /f "$(ProjectDir)Assets" "$(OutDir)Assets")
+add_custom_command(TARGET Sandbox PRE_BUILD COMMAND xcopy /i /e /s /y /f "$(ProjectDir)Assets" "$(OutDir)Assets")
