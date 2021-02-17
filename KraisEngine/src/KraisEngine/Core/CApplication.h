@@ -32,6 +32,8 @@ namespace KE {
 
 		virtual ~CApplication();
 
+		std::unique_ptr<CWindow>& GetWindow() { return m_Window; }
+
 		/// Метод работы приложения
 		/// </summary>
 		virtual void Run();
@@ -43,6 +45,7 @@ namespace KE {
 
 
 		static CApplication& Get() { return *m_Instance; }
+
 	private:
 		static CApplication* m_Instance;
 		friend int ::main(int argc, char** argv);

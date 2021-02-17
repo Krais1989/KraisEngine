@@ -14,6 +14,12 @@
 # EXTERNAL cache entries
 ########################
 
+//Build with GLFW
+BUILD_GLFW_BACKEND:BOOL=ON
+
+//Build with SDL
+BUILD_SDL_BACKEND:BOOL=ON
+
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=OFF
 
@@ -298,6 +304,9 @@ GLAD_API:STRING=
 //Value Computed by CMake
 GLAD_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine/KraisEngine/vendor/glad
 
+//The directory containing a CMake configuration file for GLAD.
+GLAD_DIR:PATH=GLAD_DIR-NOTFOUND
+
 //Set export variables for external project
 GLAD_EXPORT:BOOL=ON
 
@@ -341,6 +350,9 @@ GLFW_BUILD_EXAMPLES:BOOL=OFF
 //Build the GLFW test programs
 GLFW_BUILD_TESTS:BOOL=OFF
 
+//The directory containing a CMake configuration file for GLFW.
+GLFW_DIR:PATH=GLFW_DIR-NOTFOUND
+
 //Generate installation target
 GLFW_INSTALL:BOOL=ON
 
@@ -355,6 +367,12 @@ GLFW_VULKAN_STATIC:BOOL=OFF
 
 //Path to a program.
 HGCOMMAND:FILEPATH=HGCOMMAND-NOTFOUND
+
+//Value Computed by CMake
+ImGUI_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine/KraisEngine/vendor/imgui
+
+//Value Computed by CMake
+ImGUI_SOURCE_DIR:STATIC=E:/Projects/CPP/KraisEngine/KraisEngine/vendor/imgui
 
 //Value Computed by CMake
 KraisEngine_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine
@@ -379,6 +397,9 @@ OPENGL_glu_LIBRARY:STRING=glu32
 
 //Path to a program.
 P4COMMAND:FILEPATH=P4COMMAND-NOTFOUND
+
+//The directory containing a CMake configuration file for SDL2.
+SDL2_DIR:PATH=SDL2_DIR-NOTFOUND
 
 //Name of the computer/site where compile is being run
 SITE:STRING=DOSKTOP-NORIX
@@ -470,6 +491,9 @@ SVNCOMMAND:FILEPATH=SVNCOMMAND-NOTFOUND
 
 //Use MSVC runtime library DLL
 USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=ON
+
+//The directory containing a CMake configuration file for glad.
+glad_DIR:PATH=glad_DIR-NOTFOUND
 
 //Value Computed by CMake
 glm_BINARY_DIR:STATIC=E:/Projects/CPP/KraisEngine/KraisEngine/vendor/glm

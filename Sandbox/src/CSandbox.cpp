@@ -2,12 +2,14 @@
 #include <KraisEngine/EntryPoint.h>
 
 #include "Layers/CTestOpenGLLayer.h"
+#include "Layers/CImguiLayer.h"
 
 class CSandbox : public KE::CApplication
 {
 public:
 	CSandbox() {
 		PushLayer(new CTestOpenGLLayer());
+		PushOverlay(new CImguiLayer())
 		//PushLayer(new TestLayer());
 		/*PushOverlay(new TestOverlay());
 		PushLayer(new TestLayer2())*/;

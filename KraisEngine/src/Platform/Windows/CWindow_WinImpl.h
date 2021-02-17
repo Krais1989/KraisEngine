@@ -24,6 +24,9 @@ namespace KE
 		bool IsVSyncEnabled() const override;
 		void SetEventCallback(const EventCallbackFn& evCallback) override;
 
+
+		virtual void* GetWindowObject() { return (void*)m_Window; };
+
 	private:
 		void Init(const SWindowProps& prop);
 		void Shutdown();

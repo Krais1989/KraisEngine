@@ -60,6 +60,7 @@ namespace KE
 		m_Data.EventCallback = evCallback;
 	}
 
+
 	void CWindow_WinImpl::Init(const SWindowProps& prop)
 	{
 		m_Data.Title = prop.Title;
@@ -123,14 +124,14 @@ namespace KE
 			switch (action)
 			{
 			case GLFW_PRESS:
-				data.EventCallback(CKeyPressedEvent(key, 0));
+				data.EventCallback(CKeyPressedEvent(key));
 				break;
 			case GLFW_RELEASE:
 				data.EventCallback(CKeyReleasedEvent(key));
 				break;
-			case GLFW_REPEAT:
-				data.EventCallback(CKeyPressedEvent(key, 1));
-				break;
+				/*case GLFW_REPEAT:
+					data.EventCallback(CKeyRepeatedEvent(key));
+					break;*/
 			default:
 				break;
 			}
@@ -182,7 +183,7 @@ namespace KE
 	void CWindow_WinImpl::OnUpdate()
 	{
 		glfwPollEvents();
-		m_GraphicsContext->SwapBuffer();		
+		m_GraphicsContext->SwapBuffer();
 	}
 
 	void CWindow_WinImpl::Shutdown()

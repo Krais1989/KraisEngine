@@ -1,6 +1,7 @@
 #pragma once
 
-#include <KraisEngine/Core/CTexture2D.h>
+#include <ke_pch.h>
+#include <KraisEngine.h>
 
 namespace KE {
 	class COpenGLTexture2D : public CTexture2D

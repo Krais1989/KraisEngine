@@ -5,6 +5,8 @@
 
 namespace KE {
 
+	CApplication* CApplication::m_Instance;
+
 	bool CApplication::OnWindowClose(const CWindowCloseEvent& ev)
 	{
 		StopApplication();
@@ -13,6 +15,8 @@ namespace KE {
 
 	CApplication::CApplication()
 	{
+		m_Instance = this;
+
 		m_Window = std::unique_ptr<CWindow>(CWindow::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(&CApplication::OnEvent));
 

@@ -37,6 +37,8 @@ namespace KE {
 		virtual void SetVSync(bool enable) = 0;
 		virtual bool IsVSyncEnabled() const = 0;
 
+		virtual void* GetWindowObject() = 0;
+
 		/// <summary>
 		/// Фабричный метод создания окна
 		/// Реализуется для каждой платформы в соответствующем классе

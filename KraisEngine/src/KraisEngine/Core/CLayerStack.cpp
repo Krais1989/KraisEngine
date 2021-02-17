@@ -32,6 +32,7 @@ namespace KE
 	void CLayerStack::PushOverlay(CLayer* layer)
 	{
 		m_Layers.emplace_back(layer);
+		layer->OnAttach();
 	}
 
 	void CLayerStack::PopOverlay(CLayer* layer)

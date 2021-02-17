@@ -30,20 +30,20 @@ namespace KE
 
 	class KE_API CKeyPressedEvent : public CKeyEvent {
 	public:
+		CKeyPressedEvent(KeyCode key) : CKeyEvent(key) { }
 		KE_EVENT_TYPE(KeyPressed);
-
-		CKeyPressedEvent(KeyCode key, int repeat)
-			:CKeyEvent(key), m_Repeat(repeat)
-		{
-		}
-	protected:
-		int m_Repeat = 0;
 	};
 
 	class KE_API CKeyReleasedEvent : public CKeyEvent {
 	public:
 		CKeyReleasedEvent(KeyCode key) : CKeyEvent(key) { }
 		KE_EVENT_TYPE(KeyReleased);
+	};
+
+	class KE_API CKeyRepeatedEvent : public CKeyEvent {
+	public:
+		CKeyRepeatedEvent(KeyCode key) : CKeyEvent(key) { }
+		KE_EVENT_TYPE(KeyRepeated);
 	};
 
 	class KE_API CKeyTypedEvent : public CKeyEvent {

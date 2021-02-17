@@ -2,13 +2,34 @@
 
 
 CTestOpenGLLayer::CTestOpenGLLayer()
-	: m_CurVAO(0), m_CurShader(0), m_Time(0)
+	: m_CurVAO(0), m_CurShader(0), m_Time(0), m_CurTransform(0), m_Forward(0), m_Right(0), m_Up(0)
 {
 	m_TextureWall = KE::CTexture2D::Create("Assets/Textures/wall.jpg");
 	m_TextureStone = KE::CTexture2D::Create("Assets/Textures/stone.jpg");
 
 	LoadTestShaders();
 	LoadTestBuffers();
+	LoadTestTransforms();
+
+	float width = KE::CApplication::Get().GetWindow()->GetWidth();
+	float height = KE::CApplication::Get().GetWindow()->GetHeight();
+
+	//m_Projection = glm::ortho(0.0f, width, 0.0f, height, 0.1f, 100.0f);
+	//m_Projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
+
+
+	//m_CamPosition = glm::vec3(0.0f, 2.0f, 5.0f);
+	//m_CamDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+	//m_CamUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	m_Camera.SetPosition({ 0.0f, 2.0f, 5.0f });
+	m_Camera.SetDirection({ 0.0f, 0.0f, -1.0f });
+	m_Camera.SetUp({ 0.0f, 1.0f, 0.0f });
+
+	m_Camera.UpdatePerspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
+
+	//m_Camera.UpdateView(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
 }
 
 void CTestOpenGLLayer::OnAttach()
@@ -23,55 +44,71 @@ void CTestOpenGLLayer::OnDetach()
 
 void CTestOpenGLLayer::OnUpdate(float dt)
 {
-	//KE_INFO("CTestOpenGLLayer OnUpdate");
+	if (m_Forward != 0) {
+		m_Camera.AddPositionRelative(glm::vec3(0.0f, 0.0f, -1.0f * m_Forward) * dt);
+		auto pos = m_Camera.GetPosition();
+		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
+	}
 
-	//m_Model = glm::translate(glm::mat4(), glm::vec3(0.1f, 0.0f, 0.0f));
-	//m_Model = glm::rotate(m_Model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	//m_Model = glm::scale(m_Model, glm::vec3(1.0f, 1.0f, 1.0f));
+	if (m_Right != 0) {
+		m_Camera.AddPositionRelative(glm::vec3(1.0f * m_Right, 0.0f, 0.0f) * dt);
+		auto pos = m_Camera.GetPosition();
+		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
+	}
+
+	if (m_Up != 0) {
+		m_Camera.AddPositionRelative(glm::vec3(0.0f, 1.0f * m_Up, 0.0f) * dt);
+		auto pos = m_Camera.GetPosition();
+		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
+	}
+
+	m_Camera.Update();
+
+	//KE_INFO("CTestOpenGLLayer OnUpdate");
+	auto t01 = std::fmod(m_Time, 1.0f);
+	auto t010 = glm::sin(m_Time) / 2.0f + 0.5f;
+
+	/*auto model = glm::mat4(1.0f);
+	model = glm::rotate(model, t01 * glm::two_pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(1.0f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	m_Models[0] = model;*/
 
 	m_Time += dt;
 }
 
+
+
 void CTestOpenGLLayer::OnEvent(KE::CEvent& ev)
 {
-	//KE_INFO("CTestOpenGLLayer OnEvent");
+	if (ev.IsInCategory(KE::EEventCategory::KE_EventCategory_Keyboard)
+		&& ev.GetEventType() != KE::EEventType::KeyRepeated
+		&& ev.GetEventType() != KE::EEventType::KeyTyped) {
 
+		auto& keyEvent = reinterpret_cast<KE::CKeyEvent&>(ev);
+		OnKeyEvent(keyEvent);
+	}
 
-	switch (ev.GetEventType())
-	{
-	case KE::EEventType::KeyPressed:
-	{
-		auto& keyPressedEvent = reinterpret_cast<KE::CKeyPressedEvent&>(ev);
+	if (ev.IsInCategory(KE::KE_EventCategory_Application)) {
+		if (ev.GetEventType() == KE::EEventType::WindowResize) {
+			auto& resizeEvent = reinterpret_cast<KE::CWindowResizeEvent&>(ev);
 
-		auto key = keyPressedEvent.GetKey();
-
-		/* Смена VAO */
-		switch (keyPressedEvent.GetKey())
-		{
-		case KE::Key::D1:
-			m_CurVAO = (m_CurVAO + 1) % m_VAOs.size();
-			KE_INFO("Current VAO: [{0}] {1}", m_CurVAO, m_VAOs[m_CurVAO]);
-			break;
-		case KE::Key::D2:
-			m_CurShader = (m_CurShader + 1) % m_Shaders.size();
-			KE_INFO("Current Shader: [{0}] {1}", m_CurShader, m_Shaders[m_CurShader]->GetID());
-			break;
-		default:
-			break;
+			if (m_Camera.GetCameraType() == KE::ECameraType::Orthographic)
+			{
+				m_Camera.SetOrthoMaxWidth((float)resizeEvent.Width);
+				m_Camera.SetOrthoMaxHeight((float)resizeEvent.Height);
+			}
 		}
-		break;
 	}
-	default:
-		break;
-	}
+
 }
 
 void CTestOpenGLLayer::OnRender()
 {
-
 	/* GL_FRONT || GL_BACK || GL_FRONT_AND_BACK */
 	/* GL_POINT || GL_LINE || GL_FILL */
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	m_TextureWall->Bind(0);
 	m_TextureStone->Bind(1);
@@ -79,31 +116,71 @@ void CTestOpenGLLayer::OnRender()
 	auto& shader = *m_Shaders[m_CurShader].get();
 	shader.Bind();
 	shader.SetFloat("Time", m_Time * 5.0f);
-	shader.SetMatrix4f("MVP", m_Model);
+	shader.SetMatrix4f("Model", m_Models[m_CurTransform]);
+	shader.SetMatrix4f("View", m_Camera.GetViewMatrix());
+	shader.SetMatrix4f("Projection", m_Camera.GetProjectionMatrix());
 	shader.SetInt("texture1", 0);
 	shader.SetInt("texture2", 1);
 
-	//m_Shaders[m_CurShader]->SetFloat("Time", m_Time);
-	////m_Shaders[m_CurShader]->SetMatrix4f("MVP", m_Projection * m_View * m_Model);
-	//m_Shaders[m_CurShader]->SetMatrix4f("MVP", m_Model);
-
 	glBindVertexArray(m_VAOs[m_CurVAO]);
-
-	// >> TEXTURE WRAPPING: GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	// >> TEXTURE FILTERING: GL_NEAREST, GL_LINEAR, 
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST or GL_LINEAR);
-
-
-	//glDrawArrays(GL_TRIANGLES, 0, 3); - не подходит при использовании индексного буффера
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
 }
 
 
+void CTestOpenGLLayer::OnKeyEvent(KE::CKeyEvent& keyEv)
+{
+	bool isPressed = keyEv.GetEventType() == KE::EEventType::KeyPressed;
+	bool isReleased = keyEv.GetEventType() == KE::EEventType::KeyReleased;
+	//bool isRepeated = keyEv.GetEventType() == KE::EEventType::KeyRepeated;
+	//bool isTyped = keyEv.GetEventType() == KE::EEventType::KeyTyped;
+
+	auto key = keyEv.GetKey();
+	//KE_INFO("PRESSED:{0} RELEASED:{1} REPEATED:{2} TYPED:{3}", isPressed, isReleased, isRepeated, isTyped);
+	KE_INFO("{0}: {1}", keyEv.GetEventName(), key);
+
+	switch (key)
+	{
+	case KE::Key::D1:
+		m_CurVAO = (m_CurVAO + 1) % m_VAOs.size();
+		KE_INFO("Current VAO: [{0}] {1}", m_CurVAO, m_VAOs[m_CurVAO]);
+		break;
+	case KE::Key::D2:
+		m_CurShader = (m_CurShader + 1) % m_Shaders.size();
+		KE_INFO("Current Shader: [{0}] {1}", m_CurShader, m_Shaders[m_CurShader]->GetID());
+		break;
+	case KE::Key::D3:
+		m_CurTransform = (m_CurTransform + 1) % m_Models.size();
+		KE_INFO("Current Transform: [{0}]", m_CurTransform);
+		break;
+
+	case KE::Key::W:
+		m_Forward = isPressed ? 1 : 0;
+		break;
+	case KE::Key::A:
+		m_Right = isPressed ? -1 : 0;
+		break;
+	case KE::Key::S:
+		m_Forward = isPressed ? -1 : 0;
+		break;
+	case KE::Key::D:
+		m_Right = isPressed ? 1 : 0;
+		break;
+	case KE::Key::R:
+		m_Up = isPressed ? 1 : 0;
+		break;
+	case KE::Key::F:
+		m_Up = isPressed ? -1 : 0;
+		break;
+	default:
+		break;
+	}
+
+	keyEv.Handled = true;
+}
+
 void CTestOpenGLLayer::LoadTestShaders()
 {
-	LoadShader("shader1", std::filesystem::path("Assets/Shaders/shader1.vert"), std::filesystem::path("Assets/Shaders/shader1.frag"));
+	//LoadShader("shader1", std::filesystem::path("Assets/Shaders/shader1.vert"), std::filesystem::path("Assets/Shaders/shader1.frag"));
 	LoadShader("shader2", std::filesystem::path("Assets/Shaders/shader1.vert"), std::filesystem::path("Assets/Shaders/shader2.frag"));
 }
 
@@ -139,11 +216,20 @@ void CTestOpenGLLayer::LoadTestBuffers()
 	};
 	unsigned int inds4[] = { 0,1,3, 1,2,3 };
 
+	float fs = 2.0f;
+	float verts_floor[] = {
+		-fs,0.0f,-fs,	0.0f, 0.0f,
+		-fs,0.0f, fs,	0.0f, 1.0f,
+		fs,0.0f,fs,	1.0f, 1.0f,
+		fs,0.0f,-fs,		1.0f, 0.0f
+	};
+	unsigned int inds_floor[] = { 0,1,3, 1,2,3 };
 
-	LoadBufferVertElem(verts1, 9, inds1, 3);
-	LoadBufferVertElem(verts2, 9, inds2, 3);
-	LoadBufferVertElem(verts3, 12, inds3, 6);
-	LoadBufferVertElemUV(verts4, 20, inds4, 6);
+	//LoadBufferVertElem(verts1, 9, inds1, 3);
+	//LoadBufferVertElem(verts2, 9, inds2, 3);
+	//LoadBufferVertElem(verts3, 12, inds3, 6);
+	//LoadBufferVertElemUV(verts4, 20, inds4, 6);
+	LoadBufferVertElemUV(verts_floor, 20, inds_floor, 6);
 }
 
 void CTestOpenGLLayer::LoadShader(std::string name, fs::path vert, fs::path frag)
@@ -199,4 +285,33 @@ void CTestOpenGLLayer::LoadBufferVertElemUV(const float* verts, size_t vertsSize
 	glEnableVertexAttribArray(1);
 
 	m_VAOs.push_back(vaoId);
+}
+
+void CTestOpenGLLayer::LoadTestTransforms()
+{
+	{
+		m_Models.push_back(glm::mat4(1.0f));
+	}
+
+	{
+		auto trans = glm::translate(glm::mat4(1.0f), glm::vec3(.5f, .0f, .0f));
+		auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(.0f, .0f, 1.0f));
+		auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+		m_Models.push_back(trans * rot * scale);
+	}
+
+	{
+		auto trans = glm::translate(glm::mat4(1.0f), glm::vec3(.5f, .0f, .0f));
+		auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(.0f, .0f, 1.0f));
+		auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(.5f, .5f, .5f));
+		m_Models.push_back(trans * rot * scale);
+	}
+
+	//{
+	//	auto trans = glm::translate(glm::mat4(1.0f), glm::vec3(.5f, .5f, .0f));
+	//	auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(22.0f), glm::vec3(.0f, .0f, 1.0f));
+	//	auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(.9f, .9f, .9f));
+	//	m_Transforms.push_back(trans * rot * scale);
+	//}
+
 }

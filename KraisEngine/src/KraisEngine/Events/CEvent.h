@@ -15,7 +15,7 @@ namespace KE
 	enum class EEventType {
 		None = 0,
 		WindowResize, WindowClose, WindowFocus, WindowLostFocus, WindowMoved,
-		KeyPressed, KeyReleased, KeyTyped,
+		KeyPressed, KeyReleased, KeyRepeated, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 

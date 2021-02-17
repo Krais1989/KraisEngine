@@ -11,6 +11,7 @@ namespace KE
 	{
 		glfwMakeContextCurrent(m_Window);
 		int gladInitRes = gladLoadGL();
+		//glEnable(GL_DEPTH_TEST);
 		KE_CORE_ASSERT(gladInitRes, "GLAD Initialization error");
 	}
 
@@ -21,7 +22,8 @@ namespace KE
 
 	void COpenGLContext::Clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	void COpenGLContext::SetClearColor(float r, float g, float b, float a)
