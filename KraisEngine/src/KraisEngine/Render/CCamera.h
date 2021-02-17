@@ -14,6 +14,8 @@ namespace KE {
 	{
 	public:
 
+		CCamera() { }
+
 		ECameraType GetCameraType() const { return m_CameraType; }
 		glm::mat4& const GetViewMatrix() { return m_View; };
 		glm::mat4& const GetProjectionMatrix() { return m_Projection; };
@@ -30,7 +32,7 @@ namespace KE {
 		}
 
 		void UpdateView() {
-			m_View = glm::lookAt(m_Position, m_Position + m_Direction, m_Up);
+			m_View = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
 			m_IsViewObsolete = false;
 			KE_CORE_INFO("<UpdateView>");
 		}
@@ -43,11 +45,11 @@ namespace KE {
 		void UpdateProjection() {
 			switch (m_CameraType)
 			{
-			case KE::ECameraType::Orthographic:
+			case ECameraType::Orthographic:
 				if (m_IsOrhtographicObsolete)
 					UpdateOrthographic();
 				break;
-			case KE::ECameraType::Perspective:
+			case ECameraType::Perspective:
 				if (m_IsPerspectiveObsolete)
 					UpdatePerspective();
 				break;
@@ -94,10 +96,18 @@ namespace KE {
 		void AddPositionRelative(const glm::vec3& val) { AddPosition(val); }
 		//void AddPosition(const glm::vec3& val) { SetPosition(m_Position += val); }
 
-		glm::vec3 const& GetDirection() const { return m_Direction; }
-		void SetDirection(const glm::vec3& val) { m_IsViewObsolete = true; m_Direction = glm::normalize(val); }
-		void SetTarget(const glm::vec3& val) { SetDirection(val - m_Position); }
+		glm::vec3 const& GetForward() const { return m_Forward; }
+		void SetForward(const glm::vec3& val) { m_IsViewObsolete = true; m_Forward = glm::normalize(val); }
+		void SetTarget(const glm::vec3& val) { SetForward(val - m_Position); }
 		//void SetDirection(const glm::vec3& val) { SetTarget(m_Position + val); }
+
+		/// <summary>
+		/// Право относительно камеры. Расчитывается при вызове
+		/// </summary>
+		/// <returns></returns>
+		glm::vec3 GetRight() const {
+			return glm::normalize(glm::cross(m_Forward, m_Up));
+		}
 
 		glm::vec3 const& GetUp() const { return m_Up; }
 		void SetUp(const glm::vec3& val) { m_IsViewObsolete = true; m_Up = val; }
@@ -131,7 +141,7 @@ namespace KE {
 		ECameraType m_CameraType;
 
 		glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 m_Direction = glm::vec3(0.0f, 0.0f, -1.0f);;
+		glm::vec3 m_Forward = glm::vec3(0.0f, 0.0f, -1.0f);;
 		glm::vec3 m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		float m_MinDistance = 0.1f;

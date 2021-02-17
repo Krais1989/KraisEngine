@@ -22,11 +22,14 @@ CTestOpenGLLayer::CTestOpenGLLayer()
 	//m_CamDirection = glm::vec3(0.0f, 0.0f, 0.0f);
 	//m_CamUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	m_Camera.SetPosition({ 0.0f, 2.0f, 5.0f });
-	m_Camera.SetDirection({ 0.0f, 0.0f, -1.0f });
-	m_Camera.SetUp({ 0.0f, 1.0f, 0.0f });
+	m_Camera = std::make_shared<KE::CCamera>();
+	m_Camera->SetPosition({ 0.0f, 2.0f, 5.0f });
+	m_Camera->SetForward({ 0.0f, 0.0f, -1.0f });
+	m_Camera->SetUp({ 0.0f, 1.0f, 0.0f });
+	m_Camera->UpdatePerspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
 
-	m_Camera.UpdatePerspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
+	m_CameraController = std::make_shared<KE::CCameraController>();
+	m_CameraController->SetCamera(m_Camera);
 
 	//m_Camera.UpdateView(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -45,24 +48,25 @@ void CTestOpenGLLayer::OnDetach()
 void CTestOpenGLLayer::OnUpdate(float dt)
 {
 	if (m_Forward != 0) {
-		m_Camera.AddPositionRelative(glm::vec3(0.0f, 0.0f, -1.0f * m_Forward) * dt);
-		auto pos = m_Camera.GetPosition();
+		m_CameraController->MoveForward(m_Forward);
+		auto pos = m_Camera->GetPosition();
 		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
 	}
 
 	if (m_Right != 0) {
-		m_Camera.AddPositionRelative(glm::vec3(1.0f * m_Right, 0.0f, 0.0f) * dt);
-		auto pos = m_Camera.GetPosition();
+		m_CameraController->MoveRight(m_Right);
+		auto pos = m_Camera->GetPosition();
 		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
 	}
 
 	if (m_Up != 0) {
-		m_Camera.AddPositionRelative(glm::vec3(0.0f, 1.0f * m_Up, 0.0f) * dt);
-		auto pos = m_Camera.GetPosition();
+		m_CameraController->MoveUp(m_Up);
+		auto pos = m_Camera->GetPosition();
 		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
 	}
 
-	m_Camera.Update();
+	m_Camera->Update();
+	m_CameraController->Update(dt);
 
 	//KE_INFO("CTestOpenGLLayer OnUpdate");
 	auto t01 = std::fmod(m_Time, 1.0f);
@@ -94,10 +98,10 @@ void CTestOpenGLLayer::OnEvent(KE::CEvent& ev)
 		if (ev.GetEventType() == KE::EEventType::WindowResize) {
 			auto& resizeEvent = reinterpret_cast<KE::CWindowResizeEvent&>(ev);
 
-			if (m_Camera.GetCameraType() == KE::ECameraType::Orthographic)
+			if (m_Camera->GetCameraType() == KE::ECameraType::Orthographic)
 			{
-				m_Camera.SetOrthoMaxWidth((float)resizeEvent.Width);
-				m_Camera.SetOrthoMaxHeight((float)resizeEvent.Height);
+				m_Camera->SetOrthoMaxWidth((float)resizeEvent.Width);
+				m_Camera->SetOrthoMaxHeight((float)resizeEvent.Height);
 			}
 		}
 	}
@@ -117,8 +121,8 @@ void CTestOpenGLLayer::OnRender()
 	shader.Bind();
 	shader.SetFloat("Time", m_Time * 5.0f);
 	shader.SetMatrix4f("Model", m_Models[m_CurTransform]);
-	shader.SetMatrix4f("View", m_Camera.GetViewMatrix());
-	shader.SetMatrix4f("Projection", m_Camera.GetProjectionMatrix());
+	shader.SetMatrix4f("View", m_Camera->GetViewMatrix());
+	shader.SetMatrix4f("Projection", m_Camera->GetProjectionMatrix());
 	shader.SetInt("texture1", 0);
 	shader.SetInt("texture2", 1);
 

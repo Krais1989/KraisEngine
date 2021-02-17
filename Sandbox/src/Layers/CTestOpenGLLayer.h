@@ -60,8 +60,8 @@ protected:
 private:
 	float m_Time;
 
-	KE::CCamera m_Camera;
-
+	std::shared_ptr<KE::CCamera> m_Camera;
+	std::shared_ptr<KE::CCameraController> m_CameraController;
 
 	std::shared_ptr<KE::CTexture2D> m_TextureWall;
 	std::shared_ptr<KE::CTexture2D> m_TextureStone;
