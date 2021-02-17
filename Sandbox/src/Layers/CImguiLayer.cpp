@@ -9,7 +9,7 @@ CImguiLayer::CImguiLayer()
 {
 	IMGUI_CHECKVERSION();
 	auto* ctx = ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiIO& io = ImGui::GetIO();
 
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -61,6 +61,21 @@ void CImguiLayer::OnRender()
 
 	if (m_ShowDemo)
 		ImGui::ShowDemoWindow(&m_ShowDemo);
+
+	ImGui::Begin("Camera Tool", &m_CameraTool, ImGuiWindowFlags_MenuBar);
+	//if (ImGui::BeginMenuBar()) {
+	//	if (ImGui::BeginMenu("File")) {
+	//		if (ImGui::MenuItem("Open..", "Ctrl+O")) { KE_INFO("Open.."); }
+	//		if (ImGui::MenuItem("Save..", "Ctrl+O")) { KE_INFO("Save.."); }
+	//		if (ImGui::MenuItem("Close..", "Ctrl+O")) { KE_INFO("Close.."); }
+	//	}
+	//	ImGui::EndMenuBar();
+	//}
+
+	static float f = 0.0f;
+	ImGui::SliderFloat("fff", &f, 0.0f, 1.0f);
+
+	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

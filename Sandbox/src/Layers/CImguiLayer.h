@@ -25,5 +25,6 @@ public:
 
 protected:
 	bool m_ShowDemo = true;
+	bool m_CameraTool = true;
 
 };
