@@ -61,6 +61,10 @@ namespace KE
 			return ss.str();
 		}
 
+	public:
+		float GetMX() const { return m_X; }
+		float GetMY() const { return m_Y; }
+
 	protected:
 		float m_X, m_Y;
 	};

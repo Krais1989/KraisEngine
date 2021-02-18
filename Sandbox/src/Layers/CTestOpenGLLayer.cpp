@@ -13,7 +13,7 @@ CTestOpenGLLayer::CTestOpenGLLayer()
 
 	float width = KE::CApplication::Get().GetWindow()->GetWidth();
 	float height = KE::CApplication::Get().GetWindow()->GetHeight();
-
+	KE::CApplication::Get().GetWindow()->SetCursorEnabled(false);
 	//m_Projection = glm::ortho(0.0f, width, 0.0f, height, 0.1f, 100.0f);
 	//m_Projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
 
@@ -30,8 +30,13 @@ CTestOpenGLLayer::CTestOpenGLLayer()
 
 	m_CameraController = std::make_shared<KE::CCameraController>();
 	m_CameraController->SetCamera(m_Camera);
+	m_CameraController->SetForwardSpeed(8.0f);
+	m_CameraController->SetBackwardSpeed(8.0f);
+	m_CameraController->SetSideSpeed(8.0f);
+	m_CameraController->SetUpSpeed(8.0f);
 
 	//m_Camera.UpdateView(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
 
 }
 
@@ -49,20 +54,20 @@ void CTestOpenGLLayer::OnUpdate(float dt)
 {
 	if (m_Forward != 0) {
 		m_CameraController->MoveForward(m_Forward);
-		auto pos = m_Camera->GetPosition();
-		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
+		//auto pos = m_Camera->GetPosition();
+		//KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
 	}
 
 	if (m_Right != 0) {
 		m_CameraController->MoveRight(m_Right);
-		auto pos = m_Camera->GetPosition();
-		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
+		//auto pos = m_Camera->GetPosition();
+		//KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
 	}
 
 	if (m_Up != 0) {
 		m_CameraController->MoveUp(m_Up);
-		auto pos = m_Camera->GetPosition();
-		KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
+		//auto pos = m_Camera->GetPosition();
+		//KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
 	}
 
 	m_Camera->Update();
@@ -92,6 +97,13 @@ void CTestOpenGLLayer::OnEvent(KE::CEvent& ev)
 
 		auto& keyEvent = reinterpret_cast<KE::CKeyEvent&>(ev);
 		OnKeyEvent(keyEvent);
+	}
+
+	if (ev.IsInCategory(KE::KE_EventCategory_Mouse)) {
+		if (ev.GetEventType() == KE::EEventType::MouseMoved) {
+			auto& mouseEvent = reinterpret_cast<KE::CMouseMoveEvent&>(ev);
+			OnMouseEvent(mouseEvent);
+		}
 	}
 
 	if (ev.IsInCategory(KE::KE_EventCategory_Application)) {
@@ -182,6 +194,27 @@ void CTestOpenGLLayer::OnKeyEvent(KE::CKeyEvent& keyEv)
 	keyEv.Handled = true;
 }
 
+void CTestOpenGLLayer::OnMouseEvent(KE::CMouseMoveEvent& mouseEv)
+{
+	if (m_IsFirstMouse) {
+		m_LastMX = mouseEv.GetMX();
+		m_LastMY = mouseEv.GetMY();
+		m_IsFirstMouse = false;
+	}
+
+	float mx = mouseEv.GetMX();
+	float my = mouseEv.GetMY();
+
+	m_DeltaMX = mx - m_LastMX;
+	m_DeltaMY = m_LastMY - my;
+	m_LastMX = mx;
+	m_LastMY = my;
+
+	//KE_INFO("Delta mouse: ({0}:{1})", m_DeltaMX, m_DeltaMY);
+
+	m_CameraController->AddRotationAxes(glm::vec3(m_DeltaMY, m_DeltaMX, 0));
+}
+
 void CTestOpenGLLayer::LoadTestShaders()
 {
 	//LoadShader("shader1", std::filesystem::path("Assets/Shaders/shader1.vert"), std::filesystem::path("Assets/Shaders/shader1.frag"));
@@ -220,12 +253,12 @@ void CTestOpenGLLayer::LoadTestBuffers()
 	};
 	unsigned int inds4[] = { 0,1,3, 1,2,3 };
 
-	float fs = 2.0f;
+	float fs = 10.0f;
 	float verts_floor[] = {
 		-fs,0.0f,-fs,	0.0f, 0.0f,
 		-fs,0.0f, fs,	0.0f, 1.0f,
-		fs,0.0f,fs,	1.0f, 1.0f,
-		fs,0.0f,-fs,		1.0f, 0.0f
+		fs,0.0f,fs,		1.0f, 1.0f,
+		fs,0.0f,-fs,	1.0f, 0.0f
 	};
 	unsigned int inds_floor[] = { 0,1,3, 1,2,3 };
 

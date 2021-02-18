@@ -24,7 +24,6 @@ namespace KE {
 		/// Обновление матриц вида и проекции
 		/// </summary>
 		void Update() {
-
 			if (m_IsViewObsolete)
 				UpdateView();
 
@@ -32,9 +31,16 @@ namespace KE {
 		}
 
 		void UpdateView() {
+
+			m_Forward.x = glm::cos(glm::radians(m_Angles.y)) * glm::cos(glm::radians(m_Angles.x));
+			m_Forward.y = glm::sin(glm::radians(m_Angles.x));
+			m_Forward.z = glm::sin(glm::radians(m_Angles.y)) * glm::cos(glm::radians(m_Angles.x));
+			m_Forward = glm::normalize(m_Forward);
+
+
 			m_View = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
 			m_IsViewObsolete = false;
-			KE_CORE_INFO("<UpdateView>");
+			//KE_CORE_INFO("<UpdateView>");
 		}
 		void UpdateView(const glm::vec3& pos, const glm::vec3& tar, const glm::vec3& up) {
 			m_Position = pos;
@@ -132,6 +138,12 @@ namespace KE {
 		float GetOrthoMaxHeight() const { return m_OrthoMaxHeight; }
 		void SetOrthoMaxHeight(float val) { m_IsOrhtographicObsolete = true; m_OrthoMaxHeight = val; }
 
+		void SetRotationAxes(const glm::vec3& rotAxes) { 
+			m_IsViewObsolete = true; 
+			m_Angles = rotAxes; 
+		}
+		void AddRotationAxes(const glm::vec3& rotAxes) { SetRotationAxes(m_Angles + rotAxes); }
+		
 	protected:
 
 		bool m_IsViewObsolete = true;
@@ -157,6 +169,9 @@ namespace KE {
 
 		glm::mat4 m_View;
 		glm::mat4 m_Projection;
+		glm::quat m_Rotation;
+
+		glm::vec3 m_Angles = glm::vec3(0.0f);
 	};
 
 

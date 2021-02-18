@@ -9,9 +9,9 @@ namespace KE {
 		m_UpSpeed(1.0f),
 		m_Forward(0.0f),
 		m_Right(0.0f), 
-		m_Up(0.0f)
+		m_Up(0.0f),
+		m_LookSensivity(0.1f)
 	{
-
 	}
 
 	void CCameraController::SetCamera(const std::shared_ptr<CCamera>& camera)
@@ -56,6 +56,11 @@ namespace KE {
 		m_Up = 0.0f;
 		m_Right = 0.0f;
 		m_Forward = 0.0f;
+	}
+
+	void CCameraController::AddRotationAxes(glm::vec3 rawRotAxes)
+	{
+		m_Camera->AddRotationAxes(rawRotAxes * m_LookSensivity);
 	}
 
 }

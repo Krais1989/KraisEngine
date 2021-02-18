@@ -61,6 +61,11 @@ namespace KE
 	}
 
 
+	void CWindow_WinImpl::SetCursorEnabled(bool val)
+	{
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
 	void CWindow_WinImpl::Init(const SWindowProps& prop)
 	{
 		m_Data.Title = prop.Title;
@@ -165,7 +170,7 @@ namespace KE
 		// typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* win, double mx, double my) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
-			data.EventCallback(CMouseMoveEvent(mx, my));
+			data.EventCallback(CMouseMoveEvent((float)mx, (float)my));
 			});
 
 

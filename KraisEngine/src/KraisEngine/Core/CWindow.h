@@ -39,6 +39,8 @@ namespace KE {
 
 		virtual void* GetWindowObject() = 0;
 
+		virtual void SetCursorEnabled(bool val) = 0;
+
 		/// <summary>
 		/// Фабричный метод создания окна
 		/// Реализуется для каждой платформы в соответствующем классе

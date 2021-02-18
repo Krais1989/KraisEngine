@@ -27,6 +27,9 @@ namespace KE
 
 		virtual void* GetWindowObject() { return (void*)m_Window; };
 
+
+		virtual void SetCursorEnabled(bool val);
+
 	private:
 		void Init(const SWindowProps& prop);
 		void Shutdown();

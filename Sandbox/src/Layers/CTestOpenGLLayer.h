@@ -38,6 +38,12 @@ protected:
 	float m_Right;
 	float m_Up;
 
+	float m_LastMX;
+	float m_LastMY;
+	float m_DeltaMX;
+	float m_DeltaMY;
+
+	bool m_IsFirstMouse = true;
 
 	//glm::mat4 m_View;
 	//glm::mat4 m_Projection;
@@ -48,6 +54,7 @@ protected:
 protected:
 
 	void OnKeyEvent(KE::CKeyEvent& keyEv);
+	void OnMouseEvent(KE::CMouseMoveEvent& mouseEv);
 
 	void LoadTestShaders();
 	void LoadTestBuffers();
