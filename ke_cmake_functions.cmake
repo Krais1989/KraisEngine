@@ -13,7 +13,7 @@ macro(ke_import_shared dest_target import_target import_path implib_path inc_pat
 		IMPORTED_LOCATION ${import_path}
 		IMPORTED_IMPLIB ${implib_path})
 
-	target_link_libraries(${dest_target} INTERFACE ${import_target})
+	target_link_libraries(${dest_target} PUBLIC ${import_target})
 	ke_add_import_shared(${import_target})
 endmacro(ke_import_shared)
 

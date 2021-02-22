@@ -7,6 +7,7 @@
 #include "KraisEngine/Core/CCameraController.h"
 
 #include "KraisEngine/Events/WindowEvents.h"
+#include "KraisEngine/Core/CAudioManager.h"
 
 int main(int argc, char** argv);
 
@@ -26,10 +27,13 @@ namespace KE {
 
 		std::unique_ptr<CCameraController> m_CameraController;
 
+		std::unique_ptr<CAudioManager> m_AudioManager;
+
 	protected:
 
 		bool OnWindowClose(const CWindowCloseEvent& ev);
 		virtual void Update(float dt_sec);
+		virtual void UpdateEachFrame();
 		virtual void Render();
 
 	public:
@@ -37,6 +41,7 @@ namespace KE {
 
 		virtual ~CApplication();
 
+		CAudioManager& GetAudioManager() { return *m_AudioManager; }
 		std::unique_ptr<CWindow>& GetWindow() { return m_Window; }
 		std::unique_ptr<CCameraController>& GetCameraController() { return m_CameraController; }
 
@@ -46,7 +51,6 @@ namespace KE {
 		virtual void StopApplication();
 		virtual void PushLayer(CLayer* layer);
 		virtual void PushOverlay(CLayer* layer);
-
 		virtual void OnEvent(CEvent& ev);
 
 

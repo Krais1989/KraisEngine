@@ -31,6 +31,8 @@ namespace KE {
 
 		m_CameraController = std::make_unique<CCameraController>();
 		m_CameraController->SetCamera(std::make_shared<CCamera>());
+
+		m_AudioManager = std::make_unique<CAudioManager>();
 	}
 
 	CApplication::~CApplication()
@@ -50,6 +52,9 @@ namespace KE {
 
 		KE_CORE_INFO("Running");
 		while (m_Running) {
+
+			UpdateEachFrame();
+
 			auto curTime = clock::now();	// время на текущем фрейме
 			auto dft = curTime - lastTime;	// время между фреймами в ns.
 			lastTime = curTime;				// фиксация времени обновления кадра
@@ -71,6 +76,10 @@ namespace KE {
 		for (CLayer* layer : m_LayerStack) {
 			layer->OnUpdate(dt_sec);
 		}
+
+		auto& cam = m_CameraController->GetCamera();
+
+		m_AudioManager->SetListenerPosition(cam->GetPosition(), cam->GetForward(), cam->GetUp());
 	}
 
 	void CApplication::Render()
@@ -89,6 +98,8 @@ namespace KE {
 	{
 		//KE_CORE_INFO("{0}", ev.ToString());
 
+		m_AudioManager->OnEvent(ev);
+
 		CEventDispatcher dispatcher(ev);
 		dispatcher.Dispatch<CWindowCloseEvent>(BIND_EVENT_FN(&CApplication::OnWindowClose));
 
@@ -97,6 +108,11 @@ namespace KE {
 				break;
 			(*it)->OnEvent(ev);
 		}
+	}
+
+	void CApplication::UpdateEachFrame()
+	{
+		m_AudioManager->UpdateEachFrame();
 	}
 
 	void CApplication::PushLayer(CLayer* layer)

@@ -3,16 +3,19 @@
 
 #include "Layers/CTestOpenGLLayer.h"
 #include "Layers/CImguiLayer.h"
-#include "Layers/CTestAudioLayer.h"
 
 class CSandbox : public KE::CApplication
 {
 public:
-	CSandbox() {
+	CSandbox() : KE::CApplication() {
 		PushLayer(new CTestOpenGLLayer());
-		PushLayer(new CTestAudioLayer());
 		//PushOverlay(new CImguiLayer())
+
+		GetAudioManager().LoadMusic("Assets/Music/loop1.mp3");
+		GetAudioManager().LoadMusic("Assets/Music/Distortion melody.mp3");
+		GetAudioManager().PlayMusic(0);
 	}
+
 	~CSandbox() override {
 
 	}
@@ -26,6 +29,20 @@ public:
 		}
 
 		KE::CApplication::OnEvent(ev);		
+	}
+
+
+protected:
+
+	virtual void Update(float dt_sec) override
+	{
+		KE::CApplication::Update(dt_sec);
+	}
+
+
+	virtual void UpdateEachFrame() override
+	{
+		KE::CApplication::UpdateEachFrame();
 	}
 
 };

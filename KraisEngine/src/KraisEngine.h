@@ -6,7 +6,7 @@
 #include "KraisEngine/Core/CCameraController.h"
 #include "KraisEngine/Core/CThrottler.h"
 #include "KraisEngine/Core/CCameraController.h"
-
+#include "KraisEngine/Core/CAudioManager.h"
 
 #include "KraisEngine/Structs/DynArray.h"
 
