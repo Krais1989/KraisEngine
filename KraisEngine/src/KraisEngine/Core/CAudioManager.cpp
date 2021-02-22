@@ -31,10 +31,6 @@ namespace KE {
 			KE_ERROR("FMOD INIT ERROR! {0} {1}", result, FMOD_ErrorString(result));
 			exit(-1);
 		}
-
-		LoadMusic("Assets/Music/loop1.mp3");
-		LoadMusic("Assets/Music/Distortion melody.mp3");
-		PlayMusic(0);
 	}
 
 	CAudioManager::~CAudioManager()
@@ -60,8 +56,8 @@ namespace KE {
 	void CAudioManager::PlayMusic(int index)
 	{
 		//if (m_CurMusicIndex == index) return;
-
 		m_CurMusicIndex = index % m_Sounds.size();
+		KE_INFO("AudioManager play music [{0}]", m_CurMusicIndex);
 		PlayMusic(m_Sounds[m_CurMusicIndex]);
 	}
 
