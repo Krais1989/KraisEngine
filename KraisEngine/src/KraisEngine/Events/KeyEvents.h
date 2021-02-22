@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CEvent.h"
-#include <KraisEngine/Core/KeyCodes.h>
+#include "KraisEngine/Core/KeyCodes.h"
 
 namespace KE
 {
@@ -9,7 +9,7 @@ namespace KE
 	public:
 		KE_EVENT_CATEGORY_FLAGS(KE_EventCategory_Input | KE_EventCategory_Keyboard);
 
-		virtual std::string ToString() const
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << GetEventName() << ": " << m_Key;

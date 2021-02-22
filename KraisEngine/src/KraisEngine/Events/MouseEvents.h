@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CEvent.h"
-#include <KraisEngine/Core/MouseCodes.h>
+#include "KraisEngine/Core/MouseCodes.h"
 
 namespace KE
 {

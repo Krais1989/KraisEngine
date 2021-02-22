@@ -41,7 +41,7 @@ macro(ke_import_shared_dll source_target destination_target)
 	)
 endmacro(ke_import_shared_dll)
 
-
+# Âûחûגאוע ke_import_shared_dll הכÿ KE_IMPORTED_TARGETS
 macro(ke_import_all_shared_dlls destination_target)
 	get_property(import_targets GLOBAL PROPERTY KE_IMPORTED_TARGETS)
 	message(">>> ke_import_all_shared_dlls to ${destination_target}, targets: ${import_targets}")

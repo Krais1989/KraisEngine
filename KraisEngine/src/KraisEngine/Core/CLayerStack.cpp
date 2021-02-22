@@ -1,6 +1,5 @@
 #include "CLayerStack.h"
 
-
 namespace KE
 {
 	CLayerStack::~CLayerStack()

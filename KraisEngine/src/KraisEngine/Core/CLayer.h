@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ke_pch.h>
 #include <KraisEngine/Core/Core.h>
 #include <KraisEngine/Events/CEvent.h>
 

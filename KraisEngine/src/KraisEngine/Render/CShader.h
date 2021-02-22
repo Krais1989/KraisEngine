@@ -1,7 +1,6 @@
 #pragma once
 
 #include <KraisEngine/Core/Core.h>
-
 #include <glm/glm.hpp>
 
 namespace KE {

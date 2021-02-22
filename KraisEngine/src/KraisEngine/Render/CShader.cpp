@@ -1,6 +1,8 @@
+#include <ke_pch.h>
+
 #include "CShader.h"
-#include <KraisEngine/Core/CAsset.h>
-#include <Platform/OpenGL/COpenGLShader.h>
+#include "KraisEngine/Core/CAsset.h"
+#include "Platform/OpenGL/COpenGLShader.h"
 
 
 std::shared_ptr<KE::CShader> KE::CShader::CreateFromData(const std::string name, const char* vertexSrc, const char* fragSrc)

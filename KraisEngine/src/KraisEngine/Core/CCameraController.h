@@ -1,12 +1,12 @@
 #pragma once
 
-#include <ke_pch.h>
-#include <KraisEngine.h>
+#include <glm/glm.hpp>
 
+#include "KraisEngine/Render/CCamera.h"
+#include "KraisEngine/Events/KeyEvents.h"
+#include "KraisEngine/Events/MouseEvents.h"
 
 namespace KE {
-
-	class CCamera;
 
 	class CCameraController
 	{
@@ -28,10 +28,10 @@ namespace KE {
 		float m_LastMX;
 		float m_LastMY;
 
-		bool m_IsForwardPressed = false;
-		bool m_IsBackwardPressed = false;
-		bool m_IsRightPressed = false;
-		bool m_IsLeftPressed = false;
+		bool m_IsForwardPressed;
+		bool m_IsBackwardPressed;
+		bool m_IsRightPressed;
+		bool m_IsLeftPressed;
 
 
 	public:
@@ -49,7 +49,12 @@ namespace KE {
 
 			m_IsFirstMouse(true),
 			m_LastMX(0.0f),
-			m_LastMY(0.0f)
+			m_LastMY(0.0f),
+
+			m_IsForwardPressed(false),
+			m_IsBackwardPressed(false),
+			m_IsRightPressed(false),
+			m_IsLeftPressed(false)
 		{
 
 		}

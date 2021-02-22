@@ -1,11 +1,12 @@
 #include <ke_pch.h>
+
 #include "CApplication.h"
 
 #include <glad/glad.h>
 
 namespace KE {
 
-	CApplication* CApplication::m_Instance;
+	CApplication* CApplication::m_Instance = nullptr;
 
 	bool CApplication::OnWindowClose(const CWindowCloseEvent& ev)
 	{
@@ -20,13 +21,16 @@ namespace KE {
 		m_Window = std::unique_ptr<CWindow>(CWindow::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(&CApplication::OnEvent));
 
-		auto fpsToNano = [](double maxFps) {
+		auto fpsToNano = [](double maxFps) constexpr {
 			double nsFreq = 1.0 / maxFps * 1000000000.0;
 			return std::chrono::nanoseconds((long long)nsFreq);
 		};
 
-		m_updateTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(60)));
-		m_renderTimer = std::unique_ptr<CThrottler>(new CThrottler(fpsToNano(60)));
+		m_updateTimer = std::make_unique<CThrottler>(fpsToNano(60));
+		m_renderTimer = std::make_unique<CThrottler>(fpsToNano(60));
+
+		m_CameraController = std::make_unique<CCameraController>();
+		m_CameraController->SetCamera(std::make_shared<CCamera>());
 	}
 
 	CApplication::~CApplication()
@@ -62,6 +66,8 @@ namespace KE {
 
 	void CApplication::Update(float dt_sec)
 	{
+		m_CameraController->Update(dt_sec);
+
 		for (CLayer* layer : m_LayerStack) {
 			layer->OnUpdate(dt_sec);
 		}

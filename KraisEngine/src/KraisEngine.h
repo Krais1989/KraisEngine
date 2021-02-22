@@ -4,6 +4,8 @@
 #include "KraisEngine/Core/CApplication.h"
 #include "KraisEngine/Core/CLayer.h"
 #include "KraisEngine/Core/CCameraController.h"
+#include "KraisEngine/Core/CThrottler.h"
+#include "KraisEngine/Core/CCameraController.h"
 
 
 #include "KraisEngine/Structs/DynArray.h"

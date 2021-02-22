@@ -1,3 +1,5 @@
+#include <ke_pch.h>
+
 #include "CCameraController.h"
 
 namespace KE {
@@ -89,6 +91,8 @@ namespace KE {
 
 	void CCameraController::Update(float dt)
 	{
+		m_Camera->Update();
+
 		if (m_Forward != 0) {
 			m_Camera->AddPosition(m_Camera->GetForward() * glm::sign(m_Forward) * (m_Forward > 0.0f ? m_ForwardSpeed : m_BackwardSpeed) * dt);
 		}

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <KraisEngine.h>
-
 namespace KE {
 	class CTexture2D
 	{

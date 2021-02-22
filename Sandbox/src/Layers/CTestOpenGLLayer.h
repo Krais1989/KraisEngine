@@ -7,9 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <stb_image.h>
-
-
 namespace fs = std::filesystem;
 
 class CTestOpenGLLayer : public KE::CLayer
@@ -35,28 +32,12 @@ protected:
 	size_t m_CurShader;
 	size_t m_CurTransform;
 
-	//float m_Forward;
-	//float m_Right;
-	//float m_Up;
-
-	//float m_LastMX;
-	//float m_LastMY;
-	//float m_DeltaMX;
-	//float m_DeltaMY;
-
-	//bool m_IsFirstMouse = true;
-
-	//glm::mat4 m_View;
-	//glm::mat4 m_Projection;
-	//glm::vec3 m_CamPosition;
-	//glm::vec3 m_CamUp;
-	//glm::vec3 m_CamDirection;
-
 protected:
 
 	void OnKeyEvent(KE::CKeyEvent& keyEv);
 	void OnMouseEvent(KE::CMouseMoveEvent& mouseEv);
 
+	void LoadTestTransforms();
 	void LoadTestShaders();
 	void LoadTestBuffers();
 
@@ -64,13 +45,9 @@ protected:
 	void LoadBufferVertElem(const float* verts, size_t vertsSize, const unsigned int* inds, size_t indsSize);
 	void LoadBufferVertElemUV(const float* verts, size_t vertsSize, const unsigned int* inds, size_t indsSize);
 
-	void LoadTestTransforms();
+
 private:
 	float m_Time;
-
-	std::shared_ptr<KE::CCamera> m_Camera;
-	std::shared_ptr<KE::CCameraController> m_CameraController;
-
 	std::shared_ptr<KE::CTexture2D> m_TextureWall;
 	std::shared_ptr<KE::CTexture2D> m_TextureStone;
 

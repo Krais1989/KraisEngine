@@ -1,7 +1,10 @@
 #pragma once
 
-#include <ke_pch.h>
-#include <KraisEngine.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
+#include "KraisEngine/Core/Core.h"
+
 
 namespace KE {
 

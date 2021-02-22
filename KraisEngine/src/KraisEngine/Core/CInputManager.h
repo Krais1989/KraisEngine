@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ke_pch.h>
-#include <KraisEngine.h>
+#include "KraisEngine/Events/KeyEvents.h"
+#include "KraisEngine/Events/MouseEvents.h"
 
 namespace KE {
 	/// <summary>
