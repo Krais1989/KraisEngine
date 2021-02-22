@@ -1,15 +1,15 @@
 #include "CTestOpenGLLayer.h"
 
-
 CTestOpenGLLayer::CTestOpenGLLayer()
-	: m_CurVAO(0), m_CurShader(0), m_Time(0), m_CurTransform(0), m_Forward(0), m_Right(0), m_Up(0)
+	: m_CurVAO(0), m_CurShader(0), m_Time(0), m_CurTransform(0)
 {
+
 	m_TextureWall = KE::CTexture2D::Create("Assets/Textures/wall.jpg");
 	m_TextureStone = KE::CTexture2D::Create("Assets/Textures/stone.jpg");
 
+	LoadTestTransforms();
 	LoadTestShaders();
 	LoadTestBuffers();
-	LoadTestTransforms();
 
 	float width = KE::CApplication::Get().GetWindow()->GetWidth();
 	float height = KE::CApplication::Get().GetWindow()->GetHeight();
@@ -52,24 +52,6 @@ void CTestOpenGLLayer::OnDetach()
 
 void CTestOpenGLLayer::OnUpdate(float dt)
 {
-	if (m_Forward != 0) {
-		m_CameraController->MoveForward(m_Forward);
-		//auto pos = m_Camera->GetPosition();
-		//KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
-	}
-
-	if (m_Right != 0) {
-		m_CameraController->MoveRight(m_Right);
-		//auto pos = m_Camera->GetPosition();
-		//KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
-	}
-
-	if (m_Up != 0) {
-		m_CameraController->MoveUp(m_Up);
-		//auto pos = m_Camera->GetPosition();
-		//KE_INFO("Cam pos: {0}:{1}:{2}", pos[0], pos[1], pos[2]);
-	}
-
 	m_Camera->Update();
 	m_CameraController->Update(dt);
 
@@ -77,17 +59,8 @@ void CTestOpenGLLayer::OnUpdate(float dt)
 	auto t01 = std::fmod(m_Time, 1.0f);
 	auto t010 = glm::sin(m_Time) / 2.0f + 0.5f;
 
-	/*auto model = glm::mat4(1.0f);
-	model = glm::rotate(model, t01 * glm::two_pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(1.0f));
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
-	m_Models[0] = model;*/
-
 	m_Time += dt;
 }
-
-
 
 void CTestOpenGLLayer::OnEvent(KE::CEvent& ev)
 {
@@ -117,6 +90,9 @@ void CTestOpenGLLayer::OnEvent(KE::CEvent& ev)
 			}
 		}
 	}
+
+	if (ev.IsInCategory(KE::KE_EventCategory_Input))
+		m_CameraController->OnInputEvent(ev);
 
 }
 
@@ -168,25 +144,6 @@ void CTestOpenGLLayer::OnKeyEvent(KE::CKeyEvent& keyEv)
 		m_CurTransform = (m_CurTransform + 1) % m_Models.size();
 		KE_INFO("Current Transform: [{0}]", m_CurTransform);
 		break;
-
-	case KE::Key::W:
-		m_Forward = isPressed ? 1 : 0;
-		break;
-	case KE::Key::A:
-		m_Right = isPressed ? -1 : 0;
-		break;
-	case KE::Key::S:
-		m_Forward = isPressed ? -1 : 0;
-		break;
-	case KE::Key::D:
-		m_Right = isPressed ? 1 : 0;
-		break;
-	case KE::Key::R:
-		m_Up = isPressed ? 1 : 0;
-		break;
-	case KE::Key::F:
-		m_Up = isPressed ? -1 : 0;
-		break;
 	default:
 		break;
 	}
@@ -196,23 +153,7 @@ void CTestOpenGLLayer::OnKeyEvent(KE::CKeyEvent& keyEv)
 
 void CTestOpenGLLayer::OnMouseEvent(KE::CMouseMoveEvent& mouseEv)
 {
-	if (m_IsFirstMouse) {
-		m_LastMX = mouseEv.GetMX();
-		m_LastMY = mouseEv.GetMY();
-		m_IsFirstMouse = false;
-	}
 
-	float mx = mouseEv.GetMX();
-	float my = mouseEv.GetMY();
-
-	m_DeltaMX = mx - m_LastMX;
-	m_DeltaMY = m_LastMY - my;
-	m_LastMX = mx;
-	m_LastMY = my;
-
-	//KE_INFO("Delta mouse: ({0}:{1})", m_DeltaMX, m_DeltaMY);
-
-	m_CameraController->AddRotationAxes(glm::vec3(m_DeltaMY, m_DeltaMX, 0));
 }
 
 void CTestOpenGLLayer::LoadTestShaders()

@@ -14,10 +14,14 @@ add_executable(Sandbox ${SANDBOX_SOURCES} ${SANDBOX_HEADERS})
 set_property(TARGET Sandbox PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(Sandbox PRIVATE KraisEngine)
+KE_IMPORT_ALL_SHARED_DLLS(Sandbox)
 
 # Решает проблему копирования библиотеки KraisEngine в Sandbox при билде из IDE
 add_dependencies(Sandbox KraisEngine)
+
 message(PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR})
 message(PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR})
+
+#KECopyDLL(fmod Sandbox)
 
 add_custom_command(TARGET Sandbox PRE_BUILD COMMAND xcopy /i /e /s /y /f "$(ProjectDir)Assets" "$(OutDir)Assets")

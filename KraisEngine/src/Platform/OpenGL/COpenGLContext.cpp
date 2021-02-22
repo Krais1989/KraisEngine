@@ -13,6 +13,9 @@ namespace KE
 		int gladInitRes = gladLoadGL();
 		//glEnable(GL_DEPTH_TEST);
 		KE_CORE_ASSERT(gladInitRes, "GLAD Initialization error");
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
 	}
 
 	void COpenGLContext::SwapBuffer()
@@ -22,7 +25,7 @@ namespace KE
 
 	void COpenGLContext::Clear()
 	{
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClear(GL_COLOR_BUFFER_BIT);
 	}
 

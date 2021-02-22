@@ -9,6 +9,7 @@
 
 #include <stb_image.h>
 
+
 namespace fs = std::filesystem;
 
 class CTestOpenGLLayer : public KE::CLayer
@@ -34,16 +35,16 @@ protected:
 	size_t m_CurShader;
 	size_t m_CurTransform;
 
-	float m_Forward;
-	float m_Right;
-	float m_Up;
+	//float m_Forward;
+	//float m_Right;
+	//float m_Up;
 
-	float m_LastMX;
-	float m_LastMY;
-	float m_DeltaMX;
-	float m_DeltaMY;
+	//float m_LastMX;
+	//float m_LastMY;
+	//float m_DeltaMX;
+	//float m_DeltaMY;
 
-	bool m_IsFirstMouse = true;
+	//bool m_IsFirstMouse = true;
 
 	//glm::mat4 m_View;
 	//glm::mat4 m_Projection;

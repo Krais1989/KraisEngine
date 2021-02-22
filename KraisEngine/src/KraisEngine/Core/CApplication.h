@@ -38,10 +38,10 @@ namespace KE {
 		/// </summary>
 		virtual void Run();
 		virtual void StopApplication();
-		void PushLayer(CLayer* layer);
-		void PushOverlay(CLayer* layer);
+		virtual void PushLayer(CLayer* layer);
+		virtual void PushOverlay(CLayer* layer);
 
-		void OnEvent(CEvent& ev);
+		virtual void OnEvent(CEvent& ev);
 
 
 		static CApplication& Get() { return *m_Instance; }
