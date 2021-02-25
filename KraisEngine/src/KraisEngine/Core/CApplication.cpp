@@ -48,17 +48,14 @@ namespace KE {
 			lastTime = curTime;				// фиксация времени обновления кадра
 
 			if (m_updateTimer.Update(dft)) {
+				m_Window->PoolEvents();
 				Update(m_updateTimer.GetThrottle());
 			}
 
 			if (m_renderTimer.Update(dft)) {
 				Render();
+				m_Window->Render();
 			}
-
-
-
-			m_Window->PoolEvents();
-			m_Window->Render();
 		}
 	}
 
@@ -96,10 +93,10 @@ namespace KE {
 		CEventDispatcher dispatcher(ev);
 		dispatcher.Dispatch<CWindowCloseEvent>(BIND_EVENT_FN(&CApplication::OnWindowClose));
 
-		for (auto& layer : m_LayerStack) {
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
 			if (ev.Handled)
 				break;
-			layer->OnEvent(ev);
+			(*it)->OnEvent(ev);
 		}
 	}
 
