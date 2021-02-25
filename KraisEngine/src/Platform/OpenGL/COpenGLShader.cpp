@@ -76,6 +76,12 @@ void KE::COpenGLShader::SetInt(const char* name, int i)
 	glUniform1i(loc, i);
 }
 
+void KE::COpenGLShader::SetVector4f(const char* name, glm::vec4& vec)
+{
+	GLint loc = glGetUniformLocation(m_ProgramID, name);
+	glUniform4fv(loc, 1, glm::value_ptr(vec));
+}
+
 GLuint KE::COpenGLShader::AddShader(const char* data, GLenum type)
 {
 	GLuint shaderId;

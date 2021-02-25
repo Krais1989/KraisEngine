@@ -49,7 +49,6 @@ namespace KE {
 
 		std::unique_ptr<CWindow>& GetWindow() { return m_Window; }
 		std::unique_ptr<CGraphicsContext>& GetGraphicsContext() { return m_GraphicsContext; }
-
 		std::unique_ptr<CCameraController>& GetCameraController() { return m_CameraController; }
 
 		/// Метод работы приложения

@@ -26,6 +26,9 @@ namespace KE {
 
 		virtual unsigned int GetID() const { return m_ProgramID; }
 
+
+		virtual void SetVector4f(const char* name, glm::vec4& vec);
+
 	protected:
 		unsigned int m_ProgramID;
 		std::string m_Name;

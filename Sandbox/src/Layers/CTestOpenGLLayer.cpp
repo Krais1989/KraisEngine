@@ -120,8 +120,8 @@ void CTestOpenGLLayer::OnRender()
 	shader.SetMatrix4f("Model", m_Models[m_CurTransform]);
 	shader.SetMatrix4f("View", cam->GetViewMatrix());
 	shader.SetMatrix4f("Projection", cam->GetProjectionMatrix());
-	shader.SetInt("texture1", 0);
-	shader.SetInt("texture2", 1);
+	shader.SetInt("Texture_1", 0);
+	shader.SetVector4f("AmbientColor", glm::vec4(0, 0, 1, 1));
 
 	glBindVertexArray(m_VAOs[m_CurVAO]);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -168,7 +168,7 @@ void CTestOpenGLLayer::OnMouseEvent(KE::CMouseMoveEvent& mouseEv)
 void CTestOpenGLLayer::LoadTestShaders()
 {
 	//LoadShader("shader1", std::filesystem::path("Assets/Shaders/shader1.vert"), std::filesystem::path("Assets/Shaders/shader1.frag"));
-	LoadShader("shader2", std::filesystem::path("Assets/Shaders/shader1.vert"), std::filesystem::path("Assets/Shaders/shader2.frag"));
+	LoadShader("default", std::filesystem::path("Assets/Shaders/default.vert"), std::filesystem::path("Assets/Shaders/default.frag"));
 }
 
 void CTestOpenGLLayer::LoadTestBuffers()
