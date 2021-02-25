@@ -15,11 +15,11 @@ namespace KE
 {
 	static bool m_GLFWInitialized = false;
 
-	CWindow* CWindow::Create(const SWindowProps& data /* = SWindowData() */) {
+	CWindow* CWindow::Create(const SWindowInitData& data /* = SWindowData() */) {
 		return new CWindow_WinImpl(data);
 	}
 
-	CWindow_WinImpl::CWindow_WinImpl(const SWindowProps& data)
+	CWindow_WinImpl::CWindow_WinImpl(const SWindowInitData& data)
 	{
 		Init(data);
 	}
@@ -66,7 +66,85 @@ namespace KE
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
-	void CWindow_WinImpl::Init(const SWindowProps& prop)
+	void CWindow_WinImpl::SetTitle(const char* title)
+	{
+		glfwSetWindowTitle(m_Window, title);
+		m_Data.Title = std::string(title);
+	}
+
+	void CWindow_WinImpl::GetPosition(int* xpos, int* ypos)
+	{
+		glfwGetWindowPos(m_Window, xpos, ypos);
+	}
+
+	void CWindow_WinImpl::SetPosition(int xpos, int ypos)
+	{
+		glfwSetWindowPos(m_Window, xpos, ypos);
+	}
+
+	void CWindow_WinImpl::GetSize(int* width, int* height)
+	{
+		glfwGetWindowSize(m_Window, width, height);
+	}
+
+	void CWindow_WinImpl::SetSize(int width, int height)
+	{
+		glfwSetWindowSize(m_Window, width, height);
+		m_Data.Width = width;
+		m_Data.Height = height;
+	}
+
+	void CWindow_WinImpl::SetMaxSize(int min_width, int min_height, int max_width, int max_height)
+	{
+		glfwSetWindowSizeLimits(m_Window, min_width, min_height, max_width, max_height);
+	}
+
+	float CWindow_WinImpl::GetOpacity()
+	{
+		return glfwGetWindowOpacity(m_Window);
+	}
+
+	void CWindow_WinImpl::SetOpacity(float opacity)
+	{
+		glfwSetWindowOpacity(m_Window, opacity);
+	}
+
+	void CWindow_WinImpl::Minimize()
+	{
+		glfwIconifyWindow(m_Window);
+	}
+
+	void CWindow_WinImpl::Maximize()
+	{
+		glfwMaximizeWindow(m_Window);
+	}
+
+	void CWindow_WinImpl::Restore()
+	{
+		glfwRestoreWindow(m_Window);
+	}
+
+	void CWindow_WinImpl::Show()
+	{
+		glfwShowWindow(m_Window);
+	}
+
+	void CWindow_WinImpl::Hide()
+	{
+		glfwHideWindow(m_Window);
+	}
+
+	void CWindow_WinImpl::Focus()
+	{
+		glfwFocusWindow(m_Window);
+	}
+
+	void CWindow_WinImpl::RequestAttention()
+	{
+		glfwRequestWindowAttention(m_Window);
+	}
+
+	void CWindow_WinImpl::Init(const SWindowInitData& prop)
 	{
 		m_Data.Title = prop.Title;
 		m_Data.Width = prop.Width;
@@ -92,40 +170,34 @@ namespace KE
 
 		SetVSync(true);
 
-		float verticies[] = {
-			-.5f, -.5f, 0,
-			0, .5f, 0,
-			.5f, .5f, 0
-		};
-
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		// (* GLFWwindowsizefun)(GLFWwindow*,int,int);
+
+		glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* win, int width, int height) {
+			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
+			data.Width = width;
+			data.Height = height;
+			});
+
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* win, int width, int height) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.Width = width;
 			data.Height = height;
 
-			glViewport(0, 0, width, height);
-
 			data.EventCallback(CWindowResizeEvent(width, height));
 			});
 
-		//typedef void (* GLFWwindowclosefun)(GLFWwindow*);
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* win) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.EventCallback(CWindowCloseEvent());
 			});
 
-		// typedef void (* GLFWcharfun)(GLFWwindow*,unsigned int);
 		glfwSetCharCallback(m_Window, [](GLFWwindow* win, unsigned int code) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.EventCallback(CKeyTypedEvent(code));
 			});
 
-		//typedef void (* GLFWkeyfun)(GLFWwindow*,int,int,int,int);
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* win, int key, int scancode, int action, int modif) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
-
 			switch (action)
 			{
 			case GLFW_PRESS:
@@ -142,11 +214,8 @@ namespace KE
 			}
 			});
 
-		//typedef void (* GLFWmousebuttonfun)(GLFWwindow*,int,int,int);
-
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* win, int btn, int action, int modif) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
-
 			switch (action)
 			{
 			case GLFW_PRESS:
@@ -160,35 +229,25 @@ namespace KE
 			}
 			});
 
-		// typedef void (* GLFWscrollfun)(GLFWwindow*,double,double);
-
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* win, double xo, double yo) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.EventCallback(CMouseScrollEvent((float)xo, (float)yo));
 			});
 
-		// typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* win, double mx, double my) {
 			SWindowData& data = *(SWindowData*)glfwGetWindowUserPointer(win);
 			data.EventCallback(CMouseMoveEvent((float)mx, (float)my));
 			});
-
-
-		/* IMGUI INIT */
-		//IMGUI_CHECKVERSION();
-		//ImGui::CreateContext();
-		//ImGuiIO& io = ImGui::GetIO();
-		//// Setup Platform/Renderer bindings
-		//ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
-		//ImGui_ImplOpenGL3_Init((const char*)"#version 130");
-		//// Setup Dear ImGui style
-		//ImGui::StyleColorsDark();
 	}
 
-	void CWindow_WinImpl::OnUpdate()
+	void CWindow_WinImpl::Render()
+	{
+		glfwSwapBuffers(m_Window);
+	}
+
+	void CWindow_WinImpl::PoolEvents()
 	{
 		glfwPollEvents();
-		m_GraphicsContext->SwapBuffer();
 	}
 
 	void CWindow_WinImpl::Shutdown()

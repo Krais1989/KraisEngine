@@ -9,6 +9,8 @@
 #include "KraisEngine/Events/WindowEvents.h"
 #include "KraisEngine/Core/CAudioManager.h"
 
+#include "KraisEngine/Render/CGraphicsContext.h"
+
 int main(int argc, char** argv);
 
 namespace KE {
@@ -18,41 +20,42 @@ namespace KE {
 	protected:
 		bool m_Running = true;
 
-		std::unique_ptr<CThrottler> m_updateTimer;
-		std::unique_ptr<CThrottler> m_renderTimer;
-
-		std::unique_ptr<CWindow> m_Window;
+		CThrottler m_updateTimer;
+		CThrottler m_renderTimer;
 
 		CLayerStack m_LayerStack;
+		CAudioManager m_AudioManager;
 
+		std::unique_ptr<CGraphicsContext> m_GraphicsContext;
+		std::unique_ptr<CWindow> m_Window;
 		std::unique_ptr<CCameraController> m_CameraController;
 
-		std::unique_ptr<CAudioManager> m_AudioManager;
-
-	protected:
-
-		bool OnWindowClose(const CWindowCloseEvent& ev);
 		virtual void Update(float dt_sec);
 		virtual void UpdateEachFrame();
 		virtual void Render();
 
-	public:
-		CApplication();
+		virtual void PushLayer(CLayer* layer);
+		virtual void PushOverlay(CLayer* layer);
+		virtual void OnEvent(CEvent& ev);
 
+		virtual bool OnWindowClose(const CWindowCloseEvent& ev);
+
+		CApplication();
 		virtual ~CApplication();
 
-		CAudioManager& GetAudioManager() { return *m_AudioManager; }
+	public:
+
+		CAudioManager& GetAudioManager() { return m_AudioManager; }
+
 		std::unique_ptr<CWindow>& GetWindow() { return m_Window; }
+		std::unique_ptr<CGraphicsContext>& GetGraphicsContext() { return m_GraphicsContext; }
+
 		std::unique_ptr<CCameraController>& GetCameraController() { return m_CameraController; }
 
 		/// Метод работы приложения
 		/// </summary>
 		virtual void Run();
 		virtual void StopApplication();
-		virtual void PushLayer(CLayer* layer);
-		virtual void PushOverlay(CLayer* layer);
-		virtual void OnEvent(CEvent& ev);
-
 
 		static CApplication& Get() { return *m_Instance; }
 

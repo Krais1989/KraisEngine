@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+using namespace std::chrono_literals;
+
 namespace KE {
 
 	CApplication* CApplication::m_Instance = nullptr;
@@ -14,25 +16,16 @@ namespace KE {
 		return true;
 	}
 
-	CApplication::CApplication()
+	CApplication::CApplication() 
+		: m_updateTimer(16ms), m_renderTimer(16ms)		
 	{
 		m_Instance = this;
 
 		m_Window = std::unique_ptr<CWindow>(CWindow::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(&CApplication::OnEvent));
 
-		auto fpsToNano = [](double maxFps) constexpr {
-			double nsFreq = 1.0 / maxFps * 1000000000.0;
-			return std::chrono::nanoseconds((long long)nsFreq);
-		};
-
-		m_updateTimer = std::make_unique<CThrottler>(fpsToNano(60));
-		m_renderTimer = std::make_unique<CThrottler>(fpsToNano(60));
-
 		m_CameraController = std::make_unique<CCameraController>();
 		m_CameraController->SetCamera(std::make_shared<CCamera>());
-
-		m_AudioManager = std::make_unique<CAudioManager>();
 	}
 
 	CApplication::~CApplication()
@@ -41,11 +34,6 @@ namespace KE {
 
 	void CApplication::Run()
 	{
-		/*
-			Используется счётчик лага (lag). При достижении определенного значения (maxLag) будет произведено обновление
-			Переменная fps
-		*/
-
 		using clock = std::chrono::high_resolution_clock;
 		auto lastTime = clock::now();			// переменная последнего обновления фрейма
 		auto lag = std::chrono::nanoseconds(0);	// счётчик лага
@@ -59,27 +47,34 @@ namespace KE {
 			auto dft = curTime - lastTime;	// время между фреймами в ns.
 			lastTime = curTime;				// фиксация времени обновления кадра
 
-			if (m_updateTimer->Update(dft)) {
-				Update(m_updateTimer->GetTimeFloat());
+			if (m_updateTimer.Update(dft)) {
+				Update(m_updateTimer.GetThrottle());
 			}
 
-			if (m_renderTimer->Update(dft)) {
+			if (m_renderTimer.Update(dft)) {
 				Render();
 			}
+
+
+
+			m_Window->PoolEvents();
+			m_Window->Render();
 		}
 	}
 
 	void CApplication::Update(float dt_sec)
 	{
+		//KE_CORE_INFO("Update {0}ms", dt_sec);
+
 		m_CameraController->Update(dt_sec);
 
-		for (CLayer* layer : m_LayerStack) {
+		for (auto& layer : m_LayerStack) {
 			layer->OnUpdate(dt_sec);
 		}
 
 		auto& cam = m_CameraController->GetCamera();
 
-		m_AudioManager->SetListenerPosition(cam->GetPosition(), cam->GetForward(), cam->GetUp());
+		m_AudioManager.SetListenerPosition(cam->GetPosition(), cam->GetForward(), cam->GetUp());
 	}
 
 	void CApplication::Render()
@@ -87,32 +82,30 @@ namespace KE {
 		glClearColor(.6f, .6f, .1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for (CLayer* layer : m_LayerStack) {
+		for (auto& layer : m_LayerStack) {
 			layer->OnRender();
 		}
-
-		m_Window->OnUpdate();
 	}
 
 	void CApplication::OnEvent(CEvent& ev)
 	{
 		//KE_CORE_INFO("{0}", ev.ToString());
 
-		m_AudioManager->OnEvent(ev);
+		m_AudioManager.OnEvent(ev);
 
 		CEventDispatcher dispatcher(ev);
 		dispatcher.Dispatch<CWindowCloseEvent>(BIND_EVENT_FN(&CApplication::OnWindowClose));
 
-		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
+		for (auto& layer : m_LayerStack) {
 			if (ev.Handled)
 				break;
-			(*it)->OnEvent(ev);
+			layer->OnEvent(ev);
 		}
 	}
 
 	void CApplication::UpdateEachFrame()
 	{
-		m_AudioManager->UpdateEachFrame();
+		m_AudioManager.UpdateEachFrame();
 	}
 
 	void CApplication::PushLayer(CLayer* layer)

@@ -33,7 +33,7 @@ public:
 	/// <summary>
 	/// Текущее время тротлинга в секундах
 	/// </summary>
-	float GetTimeFloat() const { return m_timeF; }
+	float GetThrottle() const { return m_timeF; }
 
 	/// <summary>
 	/// Добавляет к m_time продолжительность dt

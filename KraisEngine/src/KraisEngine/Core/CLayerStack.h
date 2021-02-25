@@ -15,7 +15,6 @@ namespace KE {
 		CLayerStack() = default;
 		~CLayerStack();
 
-
 		void PushLayer(CLayer* layer);
 		void PopLayer(CLayer* layer);
 

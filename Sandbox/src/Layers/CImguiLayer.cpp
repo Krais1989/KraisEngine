@@ -23,7 +23,7 @@ CImguiLayer::CImguiLayer()
 	//ImGui_ImplOpenGL3_Init(glsl_version);
 
 	KE::CApplication& app = KE::CApplication::Get();
-	GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow()->GetWindowObject());
+	GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow()->GetInternalWindowObject());
 
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");

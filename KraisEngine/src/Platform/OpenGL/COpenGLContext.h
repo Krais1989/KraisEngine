@@ -17,9 +17,12 @@ namespace KE
 		COpenGLContext(GLFWwindow* window);
 
 		virtual void Init();
-		virtual void SwapBuffer();
 		virtual void Clear();
 		virtual void SetClearColor(float r, float g, float b, float a);
+
+
+		virtual void SetViewport(int left, int bottom, int width, int height);
+
 	protected:
 		GLFWwindow* m_Window;
 	};
