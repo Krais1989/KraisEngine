@@ -16,6 +16,3 @@
 [submodule "KraisEngine/vendor/stb"]
 	path = KraisEngine/vendor/stb
 	url = https://github.com/nothings/stb.git
-[submodule "KraisEngine/vendor/openal"]
-	path = KraisEngine/vendor/openal
-	url = https://github.com/kcat/openal-soft.git
