@@ -16,3 +16,6 @@
 [submodule "KraisEngine/vendor/stb"]
 	path = KraisEngine/vendor/stb
 	url = https://github.com/nothings/stb.git
+[submodule "KraisEngine/vendor/boostdi"]
+	path = KraisEngine/vendor/boostdi
+	url = https://github.com/boost-ext/di.git
