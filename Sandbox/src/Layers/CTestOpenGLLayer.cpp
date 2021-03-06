@@ -113,7 +113,7 @@ void CTestOpenGLLayer::OnRender()
 	shader.SetInt("Texture_1", 0);
 	shader.SetVector4f("AmbientColor", glm::vec4(0, 0, 1, 1));
 
-	//m_VAOs[m_CurVAO]->Bind();
+	m_VAOs[m_CurVAO]->Bind();
 
 	//glBindVertexArray();
 
@@ -132,23 +132,23 @@ void CTestOpenGLLayer::OnKeyEvent(CKeyEvent& keyEv)
 	//KE_INFO("PRESSED:{0} RELEASED:{1} REPEATED:{2} TYPED:{3}", isPressed, isReleased, isRepeated, isTyped);
 	KE_INFO("{0}: {1}", keyEv.GetEventName(), key);
 
-	//switch (key)
-	//{
-	//case Key::D1:
-	//	m_CurVAO = (m_CurVAO + 1) % m_VAOs.size();
-	//	KE_INFO("Current VAO: [{0}] {1}", m_CurVAO, m_VAOs[m_CurVAO]);
-	//	break;
-	//case Key::D2:
-	//	m_CurShader = (m_CurShader + 1) % m_Shaders.size();
-	//	KE_INFO("Current Shader: [{0}] {1}", m_CurShader, m_Shaders[m_CurShader]->GetID());
-	//	break;
-	//case Key::D3:
-	//	m_CurTransform = (m_CurTransform + 1) % m_Models.size();
-	//	KE_INFO("Current Transform: [{0}]", m_CurTransform);
-	//	break;
-	//default:
-	//	break;
-	//}
+	switch (key)
+	{
+	case Key::D1:
+		m_CurVAO = (m_CurVAO + 1) % m_VAOs.size();
+		KE_INFO("Current VAO: [{0}] {1}", m_CurVAO, m_VAOs[m_CurVAO]->GetID());
+		break;
+	case Key::D2:
+		m_CurShader = (m_CurShader + 1) % m_Shaders.size();
+		KE_INFO("Current Shader: [{0}] {1}", m_CurShader, m_Shaders[m_CurShader]->GetID());
+		break;
+	case Key::D3:
+		m_CurTransform = (m_CurTransform + 1) % m_Models.size();
+		KE_INFO("Current Transform: [{0}]", m_CurTransform);
+		break;
+	default:
+		break;
+	}
 
 	keyEv.Handled = true;
 }
@@ -210,6 +210,7 @@ void CTestOpenGLLayer::LoadTestBuffers()
 	//LoadBufferVertElem(verts3, 12, inds3, 6);
 	//LoadBufferVertElemUV(verts4, 20, inds4, 6);
 	LoadBufferVertElemUV(verts_floor, inds_floor);
+
 }
 
 void CTestOpenGLLayer::LoadShader(std::string name, fs::path vert, fs::path frag)
@@ -223,13 +224,17 @@ void CTestOpenGLLayer::LoadBufferVertElemUV(const std::vector<float>& verts, con
 	unsigned char* t = (unsigned char*)&verts.front();
 	size_t s = verts.size() * sizeof(verts.front());
 
-	//auto vertBuffer = std::shared_ptr{
-	//	m_VertexBufferFactory.Create(CBufferLayout{ {ELayoutElementType::Float, 3} }, t, s)
-	//};
-	//auto indexBuffer = std::shared_ptr{ m_IndexBufferFactory.Create(inds) };
-	//auto arrayBuffer = m_ArrayBufferFactory.Create(vertBuffer, indexBuffer);
+	auto vertBuffer = std::shared_ptr{
+		m_VertexBufferFactory.Create(CBufferLayout{ {ELayoutElementType::Float, 3}, {ELayoutElementType::Float, 2} }, t, s)
+	};
+	auto indexBuffer = std::shared_ptr{ m_IndexBufferFactory.Create(inds) };
+	auto arrayBuffer = m_ArrayBufferFactory.Create(vertBuffer, indexBuffer);
 
-	//m_VAOs.push_back(std::move(arrayBuffer));
+	vertBuffer->Init();
+	indexBuffer->Init();
+	arrayBuffer->Init();
+
+	m_VAOs.push_back(std::move(arrayBuffer));
 }
 
 void CTestOpenGLLayer::LoadTestTransforms()

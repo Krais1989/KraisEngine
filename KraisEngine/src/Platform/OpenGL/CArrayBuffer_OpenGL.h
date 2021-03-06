@@ -24,7 +24,7 @@ namespace KE
 
 		virtual void Init()
 		{
-			//KE_CORE_ASSERT(!m_IsInitialized, "Index buffer already initialized!");
+			KE_CORE_ASSERT(!m_IsInitialized, "Index buffer already initialized!");
 			if (m_IsInitialized) return;
 
 			glGenVertexArrays(1, &m_ID);
@@ -40,7 +40,7 @@ namespace KE
 
 		virtual void Bind()
 		{
-			//KE_CORE_ASSERT(m_IsInitialized, "VAO bind errror! Not Initialized!");
+			KE_CORE_ASSERT(m_IsInitialized, "VAO bind errror! Not Initialized!");
 			glBindVertexArray(m_ID);
 		}
 

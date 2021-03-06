@@ -38,7 +38,7 @@ namespace KE
 
 		virtual void Init()
 		{
-			//KE_CORE_ASSERT(!m_IsInitialized, "Vertex  buffer already initialized!");
+			KE_CORE_ASSERT(!m_IsInitialized, "Vertex  buffer already initialized!");
 			if (m_IsInitialized) return;
 
 			//m_Data.resize(data.size());
@@ -54,8 +54,9 @@ namespace KE
 				auto& attr = m_Layout[i];
 				auto attr_size = attr.GetAttributeSize();
 				auto elem_count = attr.GetElementsCount();
+				auto attr_type_gl = GetElementOpenGLType(attr.GetType());
 
-				glVertexAttribPointer(i, elem_count, GetElementOpenGLType(attr.GetType()), GL_FALSE, attr_size, (void*)prevSize);
+				glVertexAttribPointer(i, elem_count, attr_type_gl, GL_FALSE, attr_size, (void*)prevSize);
 				glEnableVertexAttribArray(i);
 
 				prevSize += attr_size;
@@ -66,7 +67,7 @@ namespace KE
 
 		virtual void Bind()
 		{
-			//KE_CORE_ASSERT(m_IsInitialized, "VBO bind error: not initialized!");
+			KE_CORE_ASSERT(m_IsInitialized, "VBO bind error: not initialized!");
 			glBindBuffer(GL_ARRAY_BUFFER, m_ID);
 		}
 	};

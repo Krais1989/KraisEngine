@@ -24,11 +24,11 @@ public:
 
 protected:
 
-	//CPlatformFactory<CVertexBuffer> m_VertexBufferFactory;
-	//CPlatformFactory<CIndexBuffer> m_IndexBufferFactory;
-	//CPlatformFactory<CArrayBuffer> m_ArrayBufferFactory;
+	CPlatformFactory<CVertexBuffer> m_VertexBufferFactory;
+	CPlatformFactory<CIndexBuffer> m_IndexBufferFactory;
+	CPlatformFactory<CArrayBuffer> m_ArrayBufferFactory;
 
-	//std::vector<CArrayBuffer> m_VAOs;
+	std::vector<std::unique_ptr<CArrayBuffer>> m_VAOs;
 	std::vector<std::shared_ptr<CShader>> m_Shaders;
 	std::vector<glm::mat4> m_Models;
 
@@ -46,7 +46,9 @@ protected:
 	void LoadTestBuffers();
 
 	void LoadShader(std::string name, fs::path vert, fs::path frag);
+	
 	void LoadBufferVertElemUV(const std::vector<float>& verts, const std::vector<unsigned int>& inds);
+	//void LoadBufferVertElemUV(const float* verts, size_t verts_size, const unsigned int* inds, size_t inds_size);
 
 
 private:
