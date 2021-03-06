@@ -230,36 +230,11 @@ void CTestOpenGLLayer::LoadBufferVertElemUV(const std::vector<float>& verts, con
 	auto indexBuffer = std::shared_ptr{ m_IndexBufferFactory.Create(inds) };
 	auto arrayBuffer = m_ArrayBufferFactory.Create(vertBuffer, indexBuffer);
 
-	
-	//std::vector<float> testback(t2, t2 + vertBuffer->GetSizeInBytes());
-
 	vertBuffer->Init();
 	indexBuffer->Init();
 	arrayBuffer->Init();
 
 	m_VAOs.push_back(std::move(arrayBuffer));
-
-
-	/*GLuint vaoId;
-	GLuint vboId;
-	GLuint eboId;
-
-	glGenVertexArrays(1, &vaoId);
-	glGenBuffers(1, &vboId);
-	glGenBuffers(1, &eboId);
-
-	glBindVertexArray(vaoId);
-	glBindBuffer(GL_ARRAY_BUFFER, vboId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertsSize, verts, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indsSize, inds, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);*/
 }
 
 void CTestOpenGLLayer::LoadTestTransforms()
