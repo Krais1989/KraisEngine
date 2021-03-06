@@ -48,20 +48,6 @@ namespace KE
 			glBindBuffer(GL_ARRAY_BUFFER, m_ID);
 			glBufferData(GL_ARRAY_BUFFER, m_Data.size(), &m_Data.front(), GL_STATIC_DRAW);
 
-			size_t prevSize = 0;
-			for (size_t i = 0; i < m_Layout.GetAttributesCount(); i++)
-			{
-				auto& attr = m_Layout[i];
-				auto attr_size = attr.GetAttributeSize();
-				auto elem_count = attr.GetElementsCount();
-				auto attr_type_gl = GetElementOpenGLType(attr.GetType());
-
-				glVertexAttribPointer(i, elem_count, attr_type_gl, GL_FALSE, attr_size, (void*)prevSize);
-				glEnableVertexAttribArray(i);
-
-				prevSize += attr_size;
-			}
-
 			m_IsInitialized = true;
 		}
 

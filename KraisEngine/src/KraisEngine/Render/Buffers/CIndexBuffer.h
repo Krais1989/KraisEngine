@@ -33,7 +33,7 @@ namespace KE
 		const storage_t& GetData() const { return m_Data; }
 		size_t GetCount() const { return m_Data.size(); }
 		size_t GetSizeInBytes() const { return CIndexBuffer::ElementSize * m_Data.size(); }
-		const void* GetRawPointer() { return (const void*)m_Data.front(); }
+		const void* GetRawPointer() { return (const void*)m_Data.data(); }
 	};
 
 

@@ -41,7 +41,8 @@ namespace KE
 
 		size_t GetSizeInBytes() const { return m_Data.size(); }
 		const storage_t& GetData() const { return m_Data; }
-		const void* GetRawPointer() { return (const void*)m_Data.front(); }
+		const void* GetRawPointer() { return m_Data.data(); }
+		const CBufferLayout& GetLayout() const { return m_Layout; }
 	};
 
 

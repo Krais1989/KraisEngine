@@ -33,6 +33,20 @@ namespace KE
 			m_VertexBuffer->Bind();
 			m_IndexBuffer->Bind();
 
+			auto layout = m_VertexBuffer->GetLayout();
+
+			for (size_t i = 0; i < layout.GetAttributesCount(); i++)
+			{
+				auto& attr = layout[i];
+				auto attr_size = attr.GetAttributeSize();
+				auto elem_count = attr.GetElementsCount();
+				auto attr_type_gl = GetElementOpenGLType(attr.GetType());
+				auto attr_offset = attr.GetOffset();
+
+				glVertexAttribPointer(i, elem_count, attr_type_gl, GL_FALSE, layout.GetStride(), (void*)attr_offset);
+				glEnableVertexAttribArray(i);
+			}
+
 			glBindVertexArray(0);
 
 			m_IsInitialized = true;
