@@ -19,10 +19,9 @@ namespace KE
 		vert_sp m_VertexBuffer;
 		index_sp m_IndexBuffer;
 	public:
-		CArrayBuffer(vert_sp vert_buffer, index_sp index_buffer)
+		CArrayBuffer(const vert_sp& vert_buffer, const index_sp& index_buffer)
 			: m_VertexBuffer(vert_buffer), m_IndexBuffer(index_buffer)
 		{
-
 		}
 	};
 }

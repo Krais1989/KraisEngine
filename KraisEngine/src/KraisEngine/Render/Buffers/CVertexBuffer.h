@@ -7,22 +7,40 @@
 namespace KE
 {
 	class CVertexBuffer : public IBindableBuffer {
-	protected:
-		using data_t = unsigned char;
 
-		std::vector<data_t> m_Data;
-		//std::unique_ptr<data_t[]> m_Data;
-		//size_t m_DataSize;
+	public:
+		using data_t = unsigned char;
+		using storage_t = std::vector<data_t>;
+
+	protected:
+
+		storage_t m_Data;
 		CBufferLayout m_Layout;
 
 	public:
+
+		CVertexBuffer(CBufferLayout layout, const data_t* raw, size_t raw_size)
+			: m_Layout(layout), m_Data(raw, raw + raw_size)
+		{
+		}
+
 		CVertexBuffer(CBufferLayout layout, std::initializer_list<data_t> data)
 			: m_Layout(layout), m_Data(data)
 		{
 		}
 
+		CVertexBuffer(CBufferLayout layout, const storage_t& data)
+			: m_Layout(layout), m_Data(data)
+		{
+		}
+
+		CVertexBuffer(CBufferLayout layout, storage_t&& data)
+			: m_Layout(layout), m_Data(std::move(data))
+		{
+		}
+
 		size_t GetSizeInBytes() const { return m_Data.size(); }
-		const std::vector<data_t>& GetData() const { return m_Data; }
+		const storage_t& GetData() const { return m_Data; }
 		const void* GetRawPointer() { return (const void*)m_Data.front(); }
 	};
 

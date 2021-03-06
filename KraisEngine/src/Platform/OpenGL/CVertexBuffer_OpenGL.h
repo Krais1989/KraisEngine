@@ -9,6 +9,26 @@ namespace KE
 
 	public:
 
+		CVertexBuffer_OpenGL(CBufferLayout layout, const data_t* raw, size_t raw_size)
+			: CVertexBuffer(layout, raw, raw_size)
+		{
+		}
+
+		CVertexBuffer_OpenGL(CBufferLayout layout, std::initializer_list<data_t> data)
+			: CVertexBuffer(layout, data)
+		{
+		}
+
+		CVertexBuffer_OpenGL(CBufferLayout layout, const storage_t& data)
+			: CVertexBuffer(layout, data)
+		{
+		}
+
+		CVertexBuffer_OpenGL(CBufferLayout layout, storage_t&& data)
+			: CVertexBuffer(layout, std::move(data))
+		{
+		}
+
 		~CVertexBuffer_OpenGL()
 		{
 			if (m_IsInitialized)
@@ -18,7 +38,7 @@ namespace KE
 
 		virtual void Init()
 		{
-			KE_ASSERT(!m_IsInitialized, "Vertex  buffer already initialized!");
+			//KE_CORE_ASSERT(!m_IsInitialized, "Vertex  buffer already initialized!");
 			if (m_IsInitialized) return;
 
 			//m_Data.resize(data.size());
@@ -46,7 +66,7 @@ namespace KE
 
 		virtual void Bind()
 		{
-			KE_ASSERT(m_IsInitialized, "VBO bind error: not initialized!");
+			//KE_CORE_ASSERT(m_IsInitialized, "VBO bind error: not initialized!");
 			glBindBuffer(GL_ARRAY_BUFFER, m_ID);
 		}
 	};

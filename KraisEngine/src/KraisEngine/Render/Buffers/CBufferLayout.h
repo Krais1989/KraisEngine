@@ -31,6 +31,12 @@ namespace KE {
 		ELayoutElementType m_ElementType;
 		size_t m_ElementsCount;
 	public:
+
+		CBufferLayoutAttribute(ELayoutElementType type, size_t elems_count)
+			:m_ElementType(type), m_ElementsCount(elems_count)
+		{
+		}
+
 		const size_t& GetElementsCount() const { return m_ElementsCount; }
 		size_t GetElementSize() const { return GetSizeOfElementType(m_ElementType); }
 		size_t GetAttributeSize() const { return GetSizeOfElementType(m_ElementType) * m_ElementsCount; }
@@ -49,7 +55,6 @@ namespace KE {
 		size_t GetAttributesCount() const { return m_Attributes.size(); }
 		const CBufferLayoutAttribute& GetAttribute(size_t i) { CheckAttributeIndex(i); return m_Attributes[i]; }
 		bool CheckAttributeIndex(size_t i) const {
-			//KE_ASSERT(, "Attribute Index invalid range: {0}", i);
 			return i >= 0 && i < m_Attributes.size();
 		}
 

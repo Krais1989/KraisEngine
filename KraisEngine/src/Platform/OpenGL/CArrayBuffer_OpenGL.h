@@ -10,6 +10,11 @@ namespace KE
 	
 	public:
 
+		CArrayBuffer_OpenGL(const vert_sp& vert_buffer, const index_sp& index_buffer)
+			: CArrayBuffer(vert_buffer, index_buffer)
+		{
+		}
+
 		~CArrayBuffer_OpenGL()
 		{
 			if (m_IsInitialized)
@@ -19,7 +24,7 @@ namespace KE
 
 		virtual void Init()
 		{
-			KE_ASSERT(!m_IsInitialized, "Index buffer already initialized!");
+			//KE_CORE_ASSERT(!m_IsInitialized, "Index buffer already initialized!");
 			if (m_IsInitialized) return;
 
 			glGenVertexArrays(1, &m_ID);
@@ -35,7 +40,7 @@ namespace KE
 
 		virtual void Bind()
 		{
-			KE_ASSERT(m_IsInitialized, "VAO bind errror! Not Initialized!");
+			//KE_CORE_ASSERT(m_IsInitialized, "VAO bind errror! Not Initialized!");
 			glBindVertexArray(m_ID);
 		}
 

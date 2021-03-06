@@ -10,6 +10,23 @@ namespace KE {
 
 	public:
 
+		CIndexBuffer_OpenGL(std::initializer_list<data_t> data)
+			: CIndexBuffer(data)
+		{
+		}
+
+		CIndexBuffer_OpenGL(const std::vector<data_t>& data)
+			: CIndexBuffer(data)
+		{
+		}
+
+		CIndexBuffer_OpenGL(std::vector<data_t>&& data)
+			: CIndexBuffer(std::move(data))
+		{
+		}
+
+
+
 		~CIndexBuffer_OpenGL()
 		{
 			if (m_IsInitialized)
@@ -19,7 +36,7 @@ namespace KE {
 
 		virtual void Init()
 		{
-			KE_CORE_ASSERT(!m_IsInitialized, "Index buffer already initialized!");
+			//KE_CORE_ASSERT(!m_IsInitialized, "Index buffer already initialized!");
 
 			if (m_IsInitialized) return;
 
@@ -32,7 +49,7 @@ namespace KE {
 
 		virtual void Bind()
 		{
-			KE_CORE_ASSERT(m_IsInitialized, "Buffer not initialized! Try init first!");
+			//KE_CORE_ASSERT(m_IsInitialized, "Buffer not initialized! Try init first!");
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
 		}
 

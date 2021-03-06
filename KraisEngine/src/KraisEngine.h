@@ -17,3 +17,6 @@
 #include "KraisEngine/Render/CShader.h"
 #include "KraisEngine/Render/CTexture2D.h"
 #include "KraisEngine/Render/CCamera.h"
+
+
+#include "Platform/Factories/CPlatformFactory.h"
